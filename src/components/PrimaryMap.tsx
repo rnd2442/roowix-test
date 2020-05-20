@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { Map } from "react-leaflet";
+import { Map, ImageOverlay } from "react-leaflet";
 import { CRS } from "leaflet";
 
 type TState = {
@@ -8,21 +8,21 @@ type TState = {
   zoom: number;
 };
 
+const bounds: [number, number][] = [
+  [1165, 0],
+  [0, 1648],
+];
+
 export const PrimaryMap: React.FC = () => {
   const mapRef = useRef(null);
   useEffect(() => {
     // @ts-ignore
     const map = mapRef.current.leafletElement;
-    const bounds: [number, number][] = [
-      [1165, 0],
-      [0, 1648],
-    ];
     // @ts-ignore
     const image = L.imageOverlay(
       "https://static.tildacdn.com/tild3965-6139-4564-b262-303737393665/_8.jpg",
       bounds
     ).addTo(map);
-
     map.fitBounds(image.getBounds());
   }, []);
 
@@ -33,8 +33,14 @@ export const PrimaryMap: React.FC = () => {
       minZoom={0}
       maxZoom={2}
       crs={CRS.Simple}
+      maxBounds={bounds}
     >
-      {}
+      {/* <ImageOverlay
+        bounds={bounds}
+        url={
+          "https://static.tildacdn.com/tild3965-6139-4564-b262-303737393665/_8.jpg"
+        }
+      /> */}
     </Map>
   );
 };
