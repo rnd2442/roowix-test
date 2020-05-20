@@ -1,6 +1,8 @@
-import React, { useEffect, useRef } from "react";
-import { Map } from "react-leaflet";
+import React, { useEffect, useRef, useState } from "react";
+import { Map, Circle, Polygon } from "react-leaflet";
 import L, { CRS, LatLngTuple } from "leaflet";
+
+const CAM_RADIUS = 10;
 
 const bounds: LatLngTuple[] = [
   [1165, 0],
@@ -9,6 +11,18 @@ const bounds: LatLngTuple[] = [
 
 export const PrimaryMap: React.FC = () => {
   const mapRef = useRef<Map>(null);
+
+  const [circle, setCircle] = useState<JSX.Element>(<></>);
+
+  const createCam = (event: L.LeafletMouseEvent) => {
+    console.log(event.latlng);
+
+    setCircle(
+      <>
+        <Circle center={event.latlng} radius={CAM_RADIUS} attribution="test" />
+      </>
+    );
+  };
 
   useEffect(() => {
     // Set bounds after map has mounted
@@ -30,8 +44,9 @@ export const PrimaryMap: React.FC = () => {
       maxZoom={1}
       crs={CRS.Simple}
       maxBounds={bounds}
+      onclick={createCam}
     >
-      {}
+      {circle}
     </Map>
   );
 };
