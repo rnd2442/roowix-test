@@ -17,9 +17,22 @@ export const PrimaryMap: React.FC = () => {
   const createCam = (event: L.LeafletMouseEvent) => {
     console.log(event.latlng);
 
+    const genLatlng = (latlng: L.LatLng, shift: boolean): LatLngTuple => {
+      return shift
+        ? [latlng.lat + 5, latlng.lng + 30]
+        : [latlng.lat - 15, latlng.lng - 25];
+    };
+
+    const arr: LatLngTuple[] = [
+      [event.latlng.lat, event.latlng.lng],
+      genLatlng(event.latlng, true),
+      genLatlng(event.latlng, false),
+    ];
+
     setCircle(
       <>
         <Circle center={event.latlng} radius={CAM_RADIUS} attribution="test" />
+        <Polygon positions={arr} />
       </>
     );
   };
