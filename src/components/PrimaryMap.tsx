@@ -1,9 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Map, Circle, Polygon } from "react-leaflet";
 import L, { CRS, LatLngTuple } from "leaflet";
-
-const CAM_RADIUS = 10;
-const ANGLE_SHIFT = 90;
+import { CAM_RADIUS, getLatLng } from "../utils";
 
 const bounds: LatLngTuple[] = [
   [1165, 0],
@@ -20,26 +18,21 @@ export const PrimaryMap: React.FC = () => {
   const [circle, setCircle] = useState<JSX.Element>(<></>);
 
   const createCam = (event: L.LeafletMouseEvent) => {
-    const directionAngle = 90;
-    const viewAngle = 60; //deg
+    const directionAngle = 45;
+    const viewAngle = 45; //deg
     const viewRange = 12;
 
     const hypotenuse = viewRange / Math.sin(toRadians(viewAngle / 2));
 
-    const genCoordinates = (angle: number, sin: boolean) =>
-      !sin
-        ? hypotenuse * Math.sin(toRadians(angle + directionAngle))
-        : hypotenuse * Math.cos(toRadians(angle + directionAngle));
+    const firstShift: LatLngTuple = getLatLng(
+      hypotenuse,
+      viewAngle / 2 + directionAngle
+    );
 
-    const firstShift: LatLngTuple = [
-      genCoordinates(viewAngle / 2, true),
-      genCoordinates(viewAngle / 2, false),
-    ];
-
-    const secondShift: LatLngTuple = [
-      genCoordinates(-viewAngle / 2, true),
-      genCoordinates(-viewAngle / 2, false),
-    ];
+    const secondShift: LatLngTuple = getLatLng(
+      hypotenuse,
+      -viewAngle / 2 + directionAngle
+    );
 
     const genLatlng = (latlng: L.LatLng, shift: LatLngTuple): LatLngTuple => {
       return [latlng.lat + shift[0], latlng.lng + shift[1]];
