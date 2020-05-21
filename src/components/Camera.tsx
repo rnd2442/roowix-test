@@ -4,22 +4,26 @@ import { Circle, Polygon } from "react-leaflet";
 import {
   Drawer,
   Button,
-  Input,
-  InputGroup,
-  Icon,
   Form,
   FormGroup,
   FormControl,
   ControlLabel,
   FlexboxGrid,
-  ButtonToolbar,
 } from "rsuite";
 import { appActions } from "../redux/actions/app.actions";
 import { CAM_RADIUS, getPolygonVertexes } from "../utils";
 import { TCamera } from "../types";
+import { LatLngTuple } from "leaflet";
 
 type TProps = {
   camera: TCamera;
+};
+
+type TState = {
+  latLng: LatLngTuple;
+  directionAngle: number;
+  viewAngle: number;
+  viewRange: number;
 };
 
 export const Camera: React.FC<TProps> = ({ camera }) => {
@@ -27,13 +31,15 @@ export const Camera: React.FC<TProps> = ({ camera }) => {
   const dispatch = useDispatch();
   const [state, setState] = useState(false);
 
-  const onClickHandler = () => {
-    console.log(id);
-    setState(true);
-  };
+  const [params, setParams] = useState<TState>({
+    latLng,
+    directionAngle,
+    viewAngle,
+    viewRange,
+  });
 
-  const btnHandler = () => {
-    dispatch(appActions.updateCamera({ ...camera, viewRange: viewRange + 10 }));
+  const onClickHandler = () => {
+    setState(true);
   };
 
   const onChangeHandler = (
@@ -44,8 +50,12 @@ export const Camera: React.FC<TProps> = ({ camera }) => {
     const name = event.target.name;
 
     if (!isNaN(+value)) {
-      dispatch(appActions.updateCamera({ ...camera, [name]: +value }));
+      setParams((prev) => ({ ...prev, [name]: +value }));
     }
+  };
+
+  const submitHandler = () => {
+    dispatch(appActions.updateCamera({ ...camera, ...params }));
   };
 
   return (
@@ -65,7 +75,7 @@ export const Camera: React.FC<TProps> = ({ camera }) => {
                 <ControlLabel>НАПРАВЛЕНИЕ(°)</ControlLabel>
                 <FormControl
                   name="directionAngle"
-                  value={directionAngle.toString()}
+                  value={params.directionAngle.toString()}
                   onChange={onChangeHandler}
                   style={{ width: 160 }}
                 />
@@ -74,7 +84,7 @@ export const Camera: React.FC<TProps> = ({ camera }) => {
                 <ControlLabel>УГОЛ ОБЗОРА(°)</ControlLabel>
                 <FormControl
                   name="viewAngle"
-                  value={viewAngle.toString()}
+                  value={params.viewAngle.toString()}
                   onChange={onChangeHandler}
                   style={{ width: 160 }}
                 />
@@ -83,14 +93,16 @@ export const Camera: React.FC<TProps> = ({ camera }) => {
                 <ControlLabel>ДАЛЬНОСТЬ ОБЗОРА(М)</ControlLabel>
                 <FormControl
                   name="viewRange"
-                  value={viewRange.toString()}
+                  value={params.viewRange.toString()}
                   onChange={onChangeHandler}
                   style={{ width: 160 }}
                 />
               </FormGroup>
             </FlexboxGrid>
             <FlexboxGrid justify="space-between">
-              <Button appearance="primary">ПРИМЕНИТЬ</Button>
+              <Button appearance="primary" onClick={submitHandler}>
+                ПРИМЕНИТЬ
+              </Button>
               <Button appearance="default">УДАЛИТЬ</Button>
             </FlexboxGrid>
           </Form>
