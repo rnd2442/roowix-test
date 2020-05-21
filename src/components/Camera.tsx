@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Circle, Polygon } from "react-leaflet";
-import { Drawer, Button } from "rsuite";
+import { Drawer, Button, Input } from "rsuite";
 import { appActions } from "../redux/actions/app.actions";
 import { CAM_RADIUS, getPolygonVertexes } from "../utils";
 import { TCamera } from "../types";
@@ -24,6 +24,18 @@ export const Camera: React.FC<TProps> = ({ camera }) => {
     dispatch(appActions.updateCamera({ ...camera, viewRange: viewRange + 10 }));
   };
 
+  const onChangeHandler = (
+    value: string,
+    event: React.SyntheticEvent<HTMLElement>
+  ) => {
+    // @ts-ignore
+    const name = event.target.name;
+
+    if (!isNaN(+value)) {
+      dispatch(appActions.updateCamera({ ...camera, [name]: +value }));
+    }
+  };
+
   return (
     <>
       <Drawer
@@ -35,6 +47,27 @@ export const Camera: React.FC<TProps> = ({ camera }) => {
           <Drawer.Title>{`Camera ${id}`}</Drawer.Title>
         </Drawer.Header>
         <Drawer.Body>
+          <Input
+            style={{ width: 300 }}
+            placeholder="directionAngle"
+            name="directionAngle"
+            value={directionAngle.toString()}
+            onChange={onChangeHandler}
+          />
+          <Input
+            style={{ width: 300 }}
+            placeholder="viewAngle"
+            name="viewAngle"
+            value={viewAngle.toString()}
+            onChange={onChangeHandler}
+          />
+          <Input
+            style={{ width: 300 }}
+            placeholder="viewRange"
+            name="viewRange"
+            value={viewRange.toString()}
+            onChange={onChangeHandler}
+          />
           <Button onClick={btnHandler}>Change</Button>
         </Drawer.Body>
         <Drawer.Footer></Drawer.Footer>
