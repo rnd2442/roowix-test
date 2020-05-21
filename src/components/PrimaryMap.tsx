@@ -3,11 +3,16 @@ import { Map, Circle, Polygon } from "react-leaflet";
 import L, { CRS, LatLngTuple } from "leaflet";
 
 const CAM_RADIUS = 10;
+const ANGLE_SHIFT = 90;
 
 const bounds: LatLngTuple[] = [
   [1165, 0],
   [0, 1648],
 ];
+
+function toRadians(angle: number) {
+  return angle * (Math.PI / 180);
+}
 
 export const PrimaryMap: React.FC = () => {
   const mapRef = useRef<Map>(null);
@@ -15,19 +20,52 @@ export const PrimaryMap: React.FC = () => {
   const [circle, setCircle] = useState<JSX.Element>(<></>);
 
   const createCam = (event: L.LeafletMouseEvent) => {
-    console.log(event.latlng);
+    // console.log(event.latlng);
 
-    const genLatlng = (latlng: L.LatLng, shift: boolean): LatLngTuple => {
-      return shift
-        ? [latlng.lat + 5, latlng.lng + 30]
-        : [latlng.lat - 15, latlng.lng - 25];
+    const viewAngle = 60; //deg
+    const viewRange = 12;
+
+    console.log(
+      "hypotenuse cos",
+      viewRange / Math.cos(toRadians(viewAngle / 2))
+    );
+    console.log(
+      "hypotenuse sin",
+      viewRange / Math.sin(toRadians(viewAngle / 2))
+    );
+
+    const hypotenuse = viewRange / Math.sin(toRadians(viewAngle / 2));
+
+    const genCoordinates = (angle: number, sin: boolean) =>
+      !sin
+        ? hypotenuse * Math.sin(toRadians(angle))
+        : hypotenuse * Math.cos(toRadians(angle));
+
+    const firstShift: LatLngTuple = [
+      genCoordinates(viewAngle / 2, true),
+      genCoordinates(viewAngle / 2, false),
+    ];
+
+    const secondShift: LatLngTuple = [
+      genCoordinates(-viewAngle / 2, true),
+      genCoordinates(-viewAngle / 2, false),
+    ];
+
+    const genLatlng = (latlng: L.LatLng, shift: LatLngTuple): LatLngTuple => {
+      return [latlng.lat + shift[0], latlng.lng + shift[1]];
     };
 
     const arr: LatLngTuple[] = [
       [event.latlng.lat, event.latlng.lng],
-      genLatlng(event.latlng, true),
-      genLatlng(event.latlng, false),
+      genLatlng(event.latlng, firstShift),
+      genLatlng(event.latlng, secondShift),
     ];
+
+    // const arr: LatLngTuple[] = [
+    //   [event.latlng.lat, event.latlng.lng],
+    //   genLatlng(event.latlng, true),
+    //   genLatlng(event.latlng, false),
+    // ];
 
     setCircle(
       <>
