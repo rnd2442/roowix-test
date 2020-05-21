@@ -1,7 +1,10 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Map } from "react-leaflet";
 import L, { CRS, LatLngTuple } from "leaflet";
+import { appActions } from "../redux/actions/app.actions";
 import { Camera } from "./Camera";
+import { TCamera, RootState } from "../types";
 
 const bounds: LatLngTuple[] = [
   [1165, 0],
@@ -9,9 +12,12 @@ const bounds: LatLngTuple[] = [
 ];
 
 export const PrimaryMap: React.FC = () => {
-  const mapRef = useRef<Map>(null);
+  const dispatch = useDispatch();
+  const { cameras } = useSelector((state: RootState) => {
+    return state.app;
+  });
 
-  const [camera, setCamera] = useState<JSX.Element>(<></>);
+  const mapRef = useRef<Map>(null);
 
   const createCam = (event: L.LeafletMouseEvent) => {
     const centerPoint: LatLngTuple = [event.latlng.lat, event.latlng.lng];
@@ -19,14 +25,15 @@ export const PrimaryMap: React.FC = () => {
     const viewAngle = 45; //deg
     const viewRange = 22;
 
-    setCamera(
-      <Camera
-        centerPoint={centerPoint}
-        directionAngle={directionAngle}
-        viewAngle={viewAngle}
-        viewRange={viewRange}
-      />
-    );
+    const newCamera: TCamera = {
+      id: new Date().toISOString(),
+      latLng: [event.latlng.lat, event.latlng.lng],
+      directionAngle,
+      viewAngle,
+      viewRange,
+    };
+
+    dispatch(appActions.createCamera(newCamera));
   };
 
   useEffect(() => {
@@ -51,7 +58,15 @@ export const PrimaryMap: React.FC = () => {
       maxBounds={bounds}
       onclick={createCam}
     >
-      {camera}
+      {cameras.map((camera) => (
+        <Camera
+          key={camera.id}
+          centerPoint={camera.latLng}
+          directionAngle={camera.directionAngle}
+          viewAngle={camera.viewAngle}
+          viewRange={camera.viewRange}
+        />
+      ))}
     </Map>
   );
 };
