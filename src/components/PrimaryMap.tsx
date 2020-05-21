@@ -18,6 +18,7 @@ export const PrimaryMap: React.FC = () => {
   const [circle, setCircle] = useState<JSX.Element>(<></>);
 
   const createCam = (event: L.LeafletMouseEvent) => {
+    const centerPoint: LatLngTuple = [event.latlng.lat, event.latlng.lng];
     const directionAngle = 45;
     const viewAngle = 45; //deg
     const viewRange = 12;
@@ -34,14 +35,17 @@ export const PrimaryMap: React.FC = () => {
       -viewAngle / 2 + directionAngle
     );
 
-    const genLatlng = (latlng: L.LatLng, shift: LatLngTuple): LatLngTuple => {
-      return [latlng.lat + shift[0], latlng.lng + shift[1]];
+    const genLatlng = (
+      center: LatLngTuple,
+      shift: LatLngTuple
+    ): LatLngTuple => {
+      return [center[0] + shift[0], center[1] + shift[1]];
     };
 
     const arr: LatLngTuple[] = [
-      [event.latlng.lat, event.latlng.lng],
-      genLatlng(event.latlng, firstShift),
-      genLatlng(event.latlng, secondShift),
+      centerPoint,
+      genLatlng(centerPoint, firstShift),
+      genLatlng(centerPoint, secondShift),
     ];
 
     setCircle(
