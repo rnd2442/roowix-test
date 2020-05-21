@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Map, Circle, Polygon } from "react-leaflet";
 import L, { CRS, LatLngTuple } from "leaflet";
-import { CAM_RADIUS, getLatLng } from "../utils";
+import { CAM_RADIUS, getLatLng, sumLatlng } from "../utils";
 
 const bounds: LatLngTuple[] = [
   [1165, 0],
@@ -23,40 +23,36 @@ export const PrimaryMap: React.FC = () => {
     const viewAngle = 45; //deg
     const viewRange = 22;
 
+    // Find hypotenuse by viewRange and angle
     const hypotenuse = viewRange / Math.sin(toRadians(viewAngle / 2));
 
-    const firstShift: LatLngTuple = getLatLng(
+    // Calc vertexes by found hypotenuse and angle
+    const firstVertex: LatLngTuple = getLatLng(
       hypotenuse,
       viewAngle / 2 + directionAngle
     );
 
-    const secondShift: LatLngTuple = getLatLng(
+    const secondVertex: LatLngTuple = getLatLng(
       hypotenuse,
       -viewAngle / 2 + directionAngle
     );
 
-    const genLatlng = (
-      center: LatLngTuple,
-      shift: LatLngTuple
-    ): LatLngTuple => {
-      return [center[0] + shift[0], center[1] + shift[1]];
-    };
-
-    const shiftedCenter = genLatlng(
+    // Triangle start position must be shifted by circle's radius
+    const shiftedCenter = sumLatlng(
       centerPoint,
       getLatLng(CAM_RADIUS, directionAngle)
     );
 
-    const arr: LatLngTuple[] = [
+    const trianle: LatLngTuple[] = [
       shiftedCenter,
-      genLatlng(shiftedCenter, firstShift),
-      genLatlng(shiftedCenter, secondShift),
+      sumLatlng(shiftedCenter, firstVertex),
+      sumLatlng(shiftedCenter, secondVertex),
     ];
 
     setCircle(
       <>
         <Circle center={event.latlng} radius={CAM_RADIUS} attribution="test" />
-        <Polygon positions={arr} />
+        <Polygon positions={trianle} />
       </>
     );
   };

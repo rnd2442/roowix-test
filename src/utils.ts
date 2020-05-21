@@ -11,7 +11,9 @@ export const getLatLng = (radius: number, angle: number): LatLngTuple => {
   ];
 };
 
-// const genCoordinates = (angle: number, sin: boolean) =>
-// !sin
-//   ? hypotenuse * Math.sin(toRadians(angle + directionAngle))
-//   : hypotenuse * Math.cos(toRadians(angle + directionAngle));
+export const sumLatlng = (
+  first: LatLngTuple,
+  second: LatLngTuple
+): LatLngTuple => {
+  return [first[0] + second[0], first[1] + second[1]];
+};
