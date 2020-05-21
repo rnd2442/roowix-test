@@ -20,26 +20,16 @@ export const PrimaryMap: React.FC = () => {
   const [circle, setCircle] = useState<JSX.Element>(<></>);
 
   const createCam = (event: L.LeafletMouseEvent) => {
-    // console.log(event.latlng);
-
+    const directionAngle = 90;
     const viewAngle = 60; //deg
     const viewRange = 12;
-
-    console.log(
-      "hypotenuse cos",
-      viewRange / Math.cos(toRadians(viewAngle / 2))
-    );
-    console.log(
-      "hypotenuse sin",
-      viewRange / Math.sin(toRadians(viewAngle / 2))
-    );
 
     const hypotenuse = viewRange / Math.sin(toRadians(viewAngle / 2));
 
     const genCoordinates = (angle: number, sin: boolean) =>
       !sin
-        ? hypotenuse * Math.sin(toRadians(angle))
-        : hypotenuse * Math.cos(toRadians(angle));
+        ? hypotenuse * Math.sin(toRadians(angle + directionAngle))
+        : hypotenuse * Math.cos(toRadians(angle + directionAngle));
 
     const firstShift: LatLngTuple = [
       genCoordinates(viewAngle / 2, true),
@@ -60,12 +50,6 @@ export const PrimaryMap: React.FC = () => {
       genLatlng(event.latlng, firstShift),
       genLatlng(event.latlng, secondShift),
     ];
-
-    // const arr: LatLngTuple[] = [
-    //   [event.latlng.lat, event.latlng.lng],
-    //   genLatlng(event.latlng, true),
-    //   genLatlng(event.latlng, false),
-    // ];
 
     setCircle(
       <>
