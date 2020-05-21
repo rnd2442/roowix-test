@@ -19,9 +19,9 @@ export const PrimaryMap: React.FC = () => {
 
   const createCam = (event: L.LeafletMouseEvent) => {
     const centerPoint: LatLngTuple = [event.latlng.lat, event.latlng.lng];
-    const directionAngle = 45;
+    const directionAngle = 30;
     const viewAngle = 45; //deg
-    const viewRange = 12;
+    const viewRange = 22;
 
     const hypotenuse = viewRange / Math.sin(toRadians(viewAngle / 2));
 
@@ -42,10 +42,15 @@ export const PrimaryMap: React.FC = () => {
       return [center[0] + shift[0], center[1] + shift[1]];
     };
 
-    const arr: LatLngTuple[] = [
+    const shiftedCenter = genLatlng(
       centerPoint,
-      genLatlng(centerPoint, firstShift),
-      genLatlng(centerPoint, secondShift),
+      getLatLng(CAM_RADIUS, directionAngle)
+    );
+
+    const arr: LatLngTuple[] = [
+      shiftedCenter,
+      genLatlng(shiftedCenter, firstShift),
+      genLatlng(shiftedCenter, secondShift),
     ];
 
     setCircle(

@@ -1,6 +1,6 @@
 import { LatLngTuple } from "leaflet";
 
-export const CAM_RADIUS = 10;
+export const CAM_RADIUS = 5;
 
 const toRadians = (angle: number) => angle * (Math.PI / 180);
 
