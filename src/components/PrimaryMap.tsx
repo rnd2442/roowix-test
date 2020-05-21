@@ -20,9 +20,9 @@ export const PrimaryMap: React.FC = () => {
   const mapRef = useRef<Map>(null);
 
   const createCam = (event: L.LeafletMouseEvent) => {
-    const directionAngle = 30;
-    const viewAngle = 45; //deg
-    const viewRange = 22;
+    const directionAngle = 0;
+    const viewAngle = 30; //deg
+    const viewRange = 80;
 
     const newCamera: TCamera = {
       id: new Date().toISOString(),

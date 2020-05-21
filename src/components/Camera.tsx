@@ -1,7 +1,19 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Circle, Polygon } from "react-leaflet";
-import { Drawer, Button, Input } from "rsuite";
+import {
+  Drawer,
+  Button,
+  Input,
+  InputGroup,
+  Icon,
+  Form,
+  FormGroup,
+  FormControl,
+  ControlLabel,
+  FlexboxGrid,
+  ButtonToolbar,
+} from "rsuite";
 import { appActions } from "../redux/actions/app.actions";
 import { CAM_RADIUS, getPolygonVertexes } from "../utils";
 import { TCamera } from "../types";
@@ -47,30 +59,42 @@ export const Camera: React.FC<TProps> = ({ camera }) => {
           <Drawer.Title>{`Camera ${id}`}</Drawer.Title>
         </Drawer.Header>
         <Drawer.Body>
-          <Input
-            style={{ width: 300 }}
-            placeholder="directionAngle"
-            name="directionAngle"
-            value={directionAngle.toString()}
-            onChange={onChangeHandler}
-          />
-          <Input
-            style={{ width: 300 }}
-            placeholder="viewAngle"
-            name="viewAngle"
-            value={viewAngle.toString()}
-            onChange={onChangeHandler}
-          />
-          <Input
-            style={{ width: 300 }}
-            placeholder="viewRange"
-            name="viewRange"
-            value={viewRange.toString()}
-            onChange={onChangeHandler}
-          />
-          <Button onClick={btnHandler}>Change</Button>
+          <Form>
+            <FlexboxGrid justify="space-between">
+              <FormGroup>
+                <ControlLabel>НАПРАВЛЕНИЕ(°)</ControlLabel>
+                <FormControl
+                  name="directionAngle"
+                  value={directionAngle.toString()}
+                  onChange={onChangeHandler}
+                  style={{ width: 160 }}
+                />
+              </FormGroup>
+              <FormGroup>
+                <ControlLabel>УГОЛ ОБЗОРА(°)</ControlLabel>
+                <FormControl
+                  name="viewAngle"
+                  value={viewAngle.toString()}
+                  onChange={onChangeHandler}
+                  style={{ width: 160 }}
+                />
+              </FormGroup>
+              <FormGroup>
+                <ControlLabel>ДАЛЬНОСТЬ ОБЗОРА(М)</ControlLabel>
+                <FormControl
+                  name="viewRange"
+                  value={viewRange.toString()}
+                  onChange={onChangeHandler}
+                  style={{ width: 160 }}
+                />
+              </FormGroup>
+            </FlexboxGrid>
+            <FlexboxGrid justify="space-between">
+              <Button appearance="primary">ПРИМЕНИТЬ</Button>
+              <Button appearance="default">УДАЛИТЬ</Button>
+            </FlexboxGrid>
+          </Form>
         </Drawer.Body>
-        <Drawer.Footer></Drawer.Footer>
       </Drawer>
       <Circle center={latLng} radius={CAM_RADIUS} onClick={onClickHandler} />
       <Polygon
