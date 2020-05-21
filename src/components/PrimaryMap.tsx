@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Map, Circle, Polygon } from "react-leaflet";
+import { Map } from "react-leaflet";
 import L, { CRS, LatLngTuple } from "leaflet";
-import { CAM_RADIUS, getPolygonVertexes } from "../utils";
+import { Camera } from "./Camera";
 
 const bounds: LatLngTuple[] = [
   [1165, 0],
@@ -11,7 +11,7 @@ const bounds: LatLngTuple[] = [
 export const PrimaryMap: React.FC = () => {
   const mapRef = useRef<Map>(null);
 
-  const [circle, setCircle] = useState<JSX.Element>(<></>);
+  const [camera, setCamera] = useState<JSX.Element>(<></>);
 
   const createCam = (event: L.LeafletMouseEvent) => {
     const centerPoint: LatLngTuple = [event.latlng.lat, event.latlng.lng];
@@ -19,18 +19,13 @@ export const PrimaryMap: React.FC = () => {
     const viewAngle = 45; //deg
     const viewRange = 22;
 
-    const trianle = getPolygonVertexes(
-      centerPoint,
-      directionAngle,
-      viewAngle,
-      viewRange
-    );
-
-    setCircle(
-      <>
-        <Circle center={event.latlng} radius={CAM_RADIUS} attribution="test" />
-        <Polygon positions={trianle} />
-      </>
+    setCamera(
+      <Camera
+        centerPoint={centerPoint}
+        directionAngle={directionAngle}
+        viewAngle={viewAngle}
+        viewRange={viewRange}
+      />
     );
   };
 
@@ -56,7 +51,7 @@ export const PrimaryMap: React.FC = () => {
       maxBounds={bounds}
       onclick={createCam}
     >
-      {circle}
+      {camera}
     </Map>
   );
 };
