@@ -25,7 +25,7 @@ export const getPolygonVertexes = (
   viewRange: number
 ): LatLngTuple[] => {
   // Find hypotenuse by viewRange and angle
-  const hypotenuse = viewRange / Math.sin(toRadians(viewAngle / 2));
+  const hypotenuse = viewRange / Math.cos(toRadians(viewAngle / 2));
 
   // Calc vertexes by found hypotenuse and angle
   const firstVertex: LatLngTuple = getLatLng(
