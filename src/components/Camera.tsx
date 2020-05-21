@@ -2,26 +2,25 @@ import React from "react";
 import { Circle, Polygon } from "react-leaflet";
 import { LatLngTuple } from "leaflet";
 import { CAM_RADIUS, getPolygonVertexes } from "../utils";
+import { TCamera } from "../types";
 
 type TProps = {
-  centerPoint: LatLngTuple;
-  directionAngle: number;
-  viewAngle: number;
-  viewRange: number;
+  camera: TCamera;
 };
 
-export const Camera: React.FC<TProps> = ({
-  centerPoint,
-  directionAngle,
-  viewAngle,
-  viewRange,
-}) => {
+export const Camera: React.FC<TProps> = ({ camera }) => {
+  const { id, latLng, directionAngle, viewAngle, viewRange } = camera;
+
+  const onClickHandler = () => {
+    console.log(id);
+  };
+
   return (
     <>
-      <Circle center={centerPoint} radius={CAM_RADIUS} attribution="test" />
+      <Circle center={latLng} radius={CAM_RADIUS} onClick={onClickHandler} />
       <Polygon
         positions={getPolygonVertexes(
-          centerPoint,
+          latLng,
           directionAngle,
           viewAngle,
           viewRange

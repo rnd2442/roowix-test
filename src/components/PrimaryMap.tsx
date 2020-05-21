@@ -70,16 +70,10 @@ export const PrimaryMap: React.FC = () => {
         maxZoom={1}
         crs={CRS.Simple}
         maxBounds={bounds}
-        onclick={createCam}
+        ondblclick={createCam}
       >
         {cameras.map(([, camera]) => (
-          <Camera
-            key={camera.id}
-            centerPoint={camera.latLng}
-            directionAngle={camera.directionAngle}
-            viewAngle={camera.viewAngle}
-            viewRange={camera.viewRange}
-          />
+          <Camera key={camera.id} camera={camera} />
         ))}
       </Map>
     </>
