@@ -3,8 +3,10 @@ import { TCamera } from "../../types";
 
 type InferValueTypes<T> = T extends { [key: string]: infer U } ? U : never;
 
+export type TIdCameraTuple = [string, TCamera];
+
 export type TAppState = {
-  cameras: TCamera[];
+  cameras: readonly TIdCameraTuple[];
 };
 
 export type TAppActions = ReturnType<InferValueTypes<typeof appActions>>;

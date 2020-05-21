@@ -21,7 +21,6 @@ export const PrimaryMap: React.FC = () => {
   const mapRef = useRef<Map>(null);
 
   const createCam = (event: L.LeafletMouseEvent) => {
-    const centerPoint: LatLngTuple = [event.latlng.lat, event.latlng.lng];
     const directionAngle = 30;
     const viewAngle = 45; //deg
     const viewRange = 22;
@@ -65,24 +64,24 @@ export const PrimaryMap: React.FC = () => {
         <Drawer.Body></Drawer.Body>
         <Drawer.Footer></Drawer.Footer>
       </Drawer>
-    <Map
-      ref={mapRef}
-      minZoom={1}
-      maxZoom={1}
-      crs={CRS.Simple}
-      maxBounds={bounds}
-      onclick={createCam}
-    >
-      {cameras.map((camera) => (
-        <Camera
-          key={camera.id}
-          centerPoint={camera.latLng}
-          directionAngle={camera.directionAngle}
-          viewAngle={camera.viewAngle}
-          viewRange={camera.viewRange}
-        />
-      ))}
-    </Map>
+      <Map
+        ref={mapRef}
+        minZoom={1}
+        maxZoom={1}
+        crs={CRS.Simple}
+        maxBounds={bounds}
+        onclick={createCam}
+      >
+        {cameras.map(([, camera]) => (
+          <Camera
+            key={camera.id}
+            centerPoint={camera.latLng}
+            directionAngle={camera.directionAngle}
+            viewAngle={camera.viewAngle}
+            viewRange={camera.viewRange}
+          />
+        ))}
+      </Map>
     </>
   );
 };
