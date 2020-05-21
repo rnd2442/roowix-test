@@ -1,4 +1,4 @@
-import { CREATE_CAMERA } from "../constants/app.constants";
+import { CREATE_CAMERA, UPDATE_CAMERA } from "../constants/app.constants";
 import { TAppState, TAppActions } from "../types/app.types";
 
 const initialState: TAppState = {
@@ -10,8 +10,12 @@ export const appReducer = (
   action: TAppActions
 ): TAppState => {
   switch (action.type) {
+    case UPDATE_CAMERA:
     case CREATE_CAMERA:
-      return { ...state, cameras: [...state.cameras, action.payload] };
+      const newList = Array.from(
+        new Map([...state.cameras, action.payload]).entries()
+      );
+      return { ...state, cameras: newList };
     default:
       return state;
   }

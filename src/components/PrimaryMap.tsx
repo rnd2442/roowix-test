@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Map } from "react-leaflet";
 import L, { CRS, LatLngTuple } from "leaflet";
-import { Drawer } from "rsuite";
 import { appActions } from "../redux/actions/app.actions";
 import { Camera } from "./Camera";
 import { TCamera, RootState } from "../types";
@@ -53,17 +52,6 @@ export const PrimaryMap: React.FC = () => {
 
   return (
     <>
-      <Drawer
-        show={state}
-        onHide={() => setState(false)}
-        backdropClassName="transparent-backdrop"
-      >
-        <Drawer.Header>
-          <Drawer.Title>Camera</Drawer.Title>
-        </Drawer.Header>
-        <Drawer.Body></Drawer.Body>
-        <Drawer.Footer></Drawer.Footer>
-      </Drawer>
       <Map
         ref={mapRef}
         minZoom={1}
