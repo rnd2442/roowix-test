@@ -4,7 +4,6 @@ import {
   Button,
   Form,
   FormGroup,
-  FormControl,
   ControlLabel,
   FlexboxGrid,
   InputGroup,
@@ -13,14 +12,13 @@ import {
 } from "rsuite";
 import { appActions } from "../redux/actions/app.actions";
 import { TCamera } from "../types";
-import { LatLngTuple } from "leaflet";
+import { LatLngLiteral, LatLngTuple } from "leaflet";
 
 type TProps = {
   camera: TCamera;
 };
 
 type TState = {
-  latLng: LatLngTuple;
   directionAngle: number;
   viewAngle: number;
   viewRange: number;
@@ -31,10 +29,14 @@ export const CameraMenu: React.FC<TProps> = ({ camera }) => {
   const { id, latLng, directionAngle, viewAngle, viewRange } = camera;
 
   const [params, setParams] = useState<TState>({
-    latLng,
     directionAngle,
     viewAngle,
     viewRange,
+  });
+
+  const [coords, setCoords] = useState<LatLngLiteral>({
+    lat: latLng[0],
+    lng: latLng[1],
   });
 
   const onChangeHandler = (
@@ -50,7 +52,13 @@ export const CameraMenu: React.FC<TProps> = ({ camera }) => {
   };
 
   const submitHandler = () => {
-    dispatch(appActions.updateCamera({ ...camera, ...params }));
+    dispatch(
+      appActions.updateCamera({
+        ...camera,
+        ...params,
+        latLng: [coords.lat, coords.lng],
+      })
+    );
   };
 
   const removeHandler = () => {
@@ -58,7 +66,13 @@ export const CameraMenu: React.FC<TProps> = ({ camera }) => {
     dispatch(appActions.removeCamera(id));
   };
 
-  const getCloseButton = () => (
+  const clearInputHandler = (event: React.SyntheticEvent) => {
+    // @ts-ignore
+    const name = event.target.name;
+    console.log(event.target, name);
+  };
+
+  const getCloseButton = (name: keyof TState | "latLng") => (
     <InputGroup.Button>
       <Icon icon="close" />
     </InputGroup.Button>
@@ -76,7 +90,7 @@ export const CameraMenu: React.FC<TProps> = ({ camera }) => {
             value={params[name].toString()}
             onChange={onChangeHandler}
           />
-          {getCloseButton()}
+          {getCloseButton(name)}
         </InputGroup>
       </FormGroup>
     );
@@ -89,10 +103,9 @@ export const CameraMenu: React.FC<TProps> = ({ camera }) => {
     // @ts-ignore
     const name = event.target.name;
 
-    console.log(name, value);
-    // if (!isNaN(+value)) {
-    //   setParams((prev) => ({ ...prev, [name]: +value }));
-    // }
+    if (!isNaN(+value)) {
+      setCoords((prev) => ({ ...prev, [name]: +value }));
+    }
   };
 
   return (
@@ -105,7 +118,7 @@ export const CameraMenu: React.FC<TProps> = ({ camera }) => {
           <InputGroup style={{ width: 360 }}>
             <Input
               name="lat"
-              value={params.latLng[0].toString()}
+              value={coords.lat.toString()}
               onChange={coordinatesHandler}
             />
             <InputGroup.Addon style={{ background: "white" }}>
@@ -113,10 +126,10 @@ export const CameraMenu: React.FC<TProps> = ({ camera }) => {
             </InputGroup.Addon>
             <Input
               name="lng"
-              value={params.latLng[1].toString()}
+              value={coords.lng.toString()}
               onChange={coordinatesHandler}
             />
-            {getCloseButton()}
+            {getCloseButton("latLng")}
           </InputGroup>
         </FormGroup>
       </FlexboxGrid>
