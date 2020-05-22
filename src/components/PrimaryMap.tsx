@@ -4,7 +4,9 @@ import { Map } from "react-leaflet";
 import L, { CRS, LatLngTuple } from "leaflet";
 import { appActions } from "../redux/actions/app.actions";
 import { Camera } from "./Camera";
-import { TCamera, RootState } from "../types";
+import { RootState } from "../types";
+import { buildCamera } from "../utils";
+import { SideForm } from "./SideForm";
 
 const bounds: LatLngTuple[] = [
   [1165, 0],
@@ -20,19 +22,9 @@ export const PrimaryMap: React.FC = () => {
   const mapRef = useRef<Map>(null);
 
   const createCam = (event: L.LeafletMouseEvent) => {
-    const directionAngle = 0;
-    const viewAngle = 30; //deg
-    const viewRange = 80;
-
-    const newCamera: TCamera = {
-      id: new Date().toISOString(),
-      latLng: [event.latlng.lat, event.latlng.lng],
-      directionAngle,
-      viewAngle,
-      viewRange,
-    };
-
-    dispatch(appActions.createCamera(newCamera));
+    dispatch(
+      appActions.createCamera(buildCamera([event.latlng.lat, event.latlng.lng]))
+    );
   };
 
   useEffect(() => {
@@ -52,6 +44,7 @@ export const PrimaryMap: React.FC = () => {
 
   return (
     <>
+      <SideForm />
       <Map
         ref={mapRef}
         minZoom={1}

@@ -39,6 +39,7 @@ export const Camera: React.FC<TProps> = ({ camera }) => {
   });
 
   const onClickHandler = () => {
+    dispatch(appActions.openCameraProps(id));
     setState(true);
   };
 

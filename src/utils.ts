@@ -1,4 +1,5 @@
 import { LatLngTuple } from "leaflet";
+import { TCamera } from "./types";
 
 export const CAM_RADIUS = 5;
 
@@ -50,3 +51,11 @@ export const getPolygonVertexes = (
     sumLatlng(shiftedCenter, secondVertex),
   ];
 };
+
+export const buildCamera = (latLng: LatLngTuple = [0, 0]): TCamera => ({
+  id: new Date().toISOString(),
+  latLng,
+  directionAngle: 0,
+  viewAngle: 30,
+  viewRange: 100,
+});

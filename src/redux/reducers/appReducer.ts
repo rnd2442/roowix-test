@@ -2,11 +2,13 @@ import {
   CREATE_CAMERA,
   UPDATE_CAMERA,
   REMOVE_CAMERA,
+  OPEN_CAMERA_PROPS,
 } from "../constants/app.constants";
 import { TAppState, TAppActions } from "../types/app.types";
 
 const initialState: TAppState = {
   cameras: [],
+  currentCameraId: "",
 };
 
 export const appReducer = (
@@ -24,6 +26,8 @@ export const appReducer = (
       const map = new Map([...state.cameras]);
       map.delete(action.payload);
       return { ...state, cameras: Array.from(map.entries()) };
+    case OPEN_CAMERA_PROPS:
+      return { ...state, currentCameraId: action.payload };
     default:
       return state;
   }

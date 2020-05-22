@@ -7,6 +7,7 @@ export type TIdCameraTuple = [string, TCamera];
 
 export type TAppState = {
   cameras: readonly TIdCameraTuple[];
+  currentCameraId: string;
 };
 
 export type TAppActions = ReturnType<InferValueTypes<typeof appActions>>;
