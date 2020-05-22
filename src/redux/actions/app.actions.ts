@@ -1,4 +1,8 @@
-import { CREATE_CAMERA, UPDATE_CAMERA } from "../constants/app.constants";
+import {
+  CREATE_CAMERA,
+  UPDATE_CAMERA,
+  REMOVE_CAMERA,
+} from "../constants/app.constants";
 import { TCamera } from "../../types";
 import { TIdCameraTuple } from "../types/app.types";
 
@@ -12,7 +16,13 @@ const updateCamera = (camera: TCamera) => ({
   payload: [camera.id, camera] as TIdCameraTuple,
 });
 
+const removeCamera = (id: string) => ({
+  type: REMOVE_CAMERA,
+  payload: id,
+});
+
 export const appActions = {
   createCamera,
   updateCamera,
+  removeCamera,
 };

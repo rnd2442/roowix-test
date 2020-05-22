@@ -58,6 +58,10 @@ export const Camera: React.FC<TProps> = ({ camera }) => {
     dispatch(appActions.updateCamera({ ...camera, ...params }));
   };
 
+  const removeHandler = () => {
+    dispatch(appActions.removeCamera(id));
+  };
+
   const getInput = (label: string, name: keyof TState) => {
     return (
       <FormGroup>
@@ -97,7 +101,9 @@ export const Camera: React.FC<TProps> = ({ camera }) => {
               <Button appearance="primary" onClick={submitHandler}>
                 ПРИМЕНИТЬ
               </Button>
-              <Button appearance="default">УДАЛИТЬ</Button>
+              <Button appearance="default" onClick={removeHandler}>
+                УДАЛИТЬ
+              </Button>
             </FlexboxGrid>
           </Form>
         </Drawer.Body>
