@@ -7,7 +7,10 @@ export type TIdCameraTuple = [string, TCamera];
 
 export type TAppState = {
   cameras: readonly TIdCameraTuple[];
-  currentCameraId: string;
+  sideFormProps: {
+    isOpened: boolean;
+    currentCameraId: string;
+  };
 };
 
 export type TAppActions = ReturnType<InferValueTypes<typeof appActions>>;

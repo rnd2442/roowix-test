@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Circle, Polygon } from "react-leaflet";
 import {
   Drawer,
   Button,
@@ -11,8 +10,8 @@ import {
   FlexboxGrid,
 } from "rsuite";
 import { appActions } from "../redux/actions/app.actions";
-import { CAM_RADIUS, getPolygonVertexes, buildCamera } from "../utils";
-import { TCamera, RootState } from "../types";
+import { buildCamera } from "../utils";
+import { RootState } from "../types";
 import { LatLngTuple } from "leaflet";
 
 type TState = {
@@ -24,14 +23,13 @@ type TState = {
 
 export const SideForm: React.FC = ({}) => {
   const dispatch = useDispatch();
-  const { currentCameraId, cameras } = useSelector((state: RootState) => {
+  const { sideFormProps, cameras } = useSelector((state: RootState) => {
     return state.app;
   });
+  const { isOpened, currentCameraId } = sideFormProps;
 
   const camera = new Map(cameras).get(currentCameraId) || buildCamera();
   const { latLng, directionAngle, viewAngle, viewRange } = camera;
-
-  const [isOpened, setOpened] = useState(false);
 
   const [params, setParams] = useState<TState>({
     latLng,
@@ -60,7 +58,6 @@ export const SideForm: React.FC = ({}) => {
     dispatch(appActions.removeCamera(currentCameraId));
   };
 
-  /*
   const getInput = (label: string, name: keyof TState) => {
     return (
       <FormGroup>
@@ -76,14 +73,11 @@ export const SideForm: React.FC = ({}) => {
       </FormGroup>
     );
   };
-  */
-
-  return <></>;
 
   return (
     <Drawer
       show={isOpened}
-      onHide={() => setOpened(false)}
+      onHide={() => dispatch(appActions.closeCameraProps())}
       backdrop={false}
       backdropClassName="transparent-backdrop"
       keyboard
@@ -94,9 +88,9 @@ export const SideForm: React.FC = ({}) => {
       <Drawer.Body>
         <Form>
           <FlexboxGrid justify="space-between">
-            {/* {getInput("направление(°)", "directionAngle")}
+            {getInput("направление(°)", "directionAngle")}
             {getInput("угол обзора(°)", "viewAngle")}
-            {getInput("дальность обзора(м)", "viewRange")} */}
+            {getInput("дальность обзора(м)", "viewRange")}
           </FlexboxGrid>
           <FlexboxGrid justify="space-between">
             <Button appearance="primary" onClick={submitHandler}>

@@ -3,12 +3,16 @@ import {
   UPDATE_CAMERA,
   REMOVE_CAMERA,
   OPEN_CAMERA_PROPS,
+  CLOSE_CAMERA_PROPS,
 } from "../constants/app.constants";
 import { TAppState, TAppActions } from "../types/app.types";
 
 const initialState: TAppState = {
   cameras: [],
-  currentCameraId: "",
+  sideFormProps: {
+    isOpened: false,
+    currentCameraId: "",
+  },
 };
 
 export const appReducer = (
@@ -27,7 +31,15 @@ export const appReducer = (
       map.delete(action.payload);
       return { ...state, cameras: Array.from(map.entries()) };
     case OPEN_CAMERA_PROPS:
-      return { ...state, currentCameraId: action.payload };
+      return {
+        ...state,
+        sideFormProps: { isOpened: true, currentCameraId: action.payload },
+      };
+    case CLOSE_CAMERA_PROPS:
+      return {
+        ...state,
+        sideFormProps: { ...state.sideFormProps, isOpened: false },
+      };
     default:
       return state;
   }

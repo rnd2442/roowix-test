@@ -3,6 +3,7 @@ import {
   UPDATE_CAMERA,
   REMOVE_CAMERA,
   OPEN_CAMERA_PROPS,
+  CLOSE_CAMERA_PROPS,
 } from "../constants/app.constants";
 import { TCamera } from "../../types";
 import { TIdCameraTuple } from "../types/app.types";
@@ -27,9 +28,14 @@ const openCameraProps = (id: string) => ({
   payload: id,
 });
 
+const closeCameraProps = () => ({
+  type: CLOSE_CAMERA_PROPS,
+});
+
 export const appActions = {
   createCamera,
   updateCamera,
   removeCamera,
   openCameraProps,
+  closeCameraProps,
 };
