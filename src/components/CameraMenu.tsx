@@ -120,6 +120,23 @@ export const CameraMenu: React.FC<TProps> = ({ camera }) => {
     }
   };
 
+  const getLatLngInput = (name: keyof TDegMinutes) => {
+    const len = coords[name].toString().length;
+    return (
+      <Input
+        // style={{
+        //   width: `${len * 4}px`,
+        // }}
+        // style={{
+        //   width: `5px`,
+        // }}
+        name={name}
+        value={coords[name].toString()}
+        onChange={coordinatesHandler}
+      />
+    );
+  };
+
   return (
     <Form>
       <FlexboxGrid justify="space-between">
@@ -128,31 +145,15 @@ export const CameraMenu: React.FC<TProps> = ({ camera }) => {
             {"коррдинаты"}
           </ControlLabel>
           <InputGroup style={{ width: 360 }}>
-            <Input
-              name="latDeg"
-              value={coords.latDeg.toString()}
-              onChange={coordinatesHandler}
-            />
+            {getLatLngInput("latDeg")}
             <InputGroup.Addon style={{ background: "white" }} />
-            <Input
-              name="latMin"
-              value={coords.latMin.toString()}
-              onChange={coordinatesHandler}
-            />
+            {getLatLngInput("latMin")}
             <InputGroup.Addon style={{ background: "white" }}>
               ,
             </InputGroup.Addon>
-            <Input
-              name="lngDeg"
-              value={coords.lngDeg.toString()}
-              onChange={coordinatesHandler}
-            />
+            {getLatLngInput("lngDeg")}
             <InputGroup.Addon style={{ background: "white" }} />
-            <Input
-              name="lngMin"
-              value={coords.lngMin.toString()}
-              onChange={coordinatesHandler}
-            />
+            {getLatLngInput("lngMin")}
             {getCloseButton("latLng")}
           </InputGroup>
         </FormGroup>
