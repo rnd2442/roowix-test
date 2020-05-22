@@ -12,7 +12,7 @@ import {
 } from "rsuite";
 import { appActions } from "../redux/actions/app.actions";
 import { TCamera } from "../types";
-import { LatLngLiteral } from "leaflet";
+import { convertToDM, convertToLatlng } from "../utils";
 
 type TProps = {
   camera: TCamera;
@@ -22,6 +22,13 @@ type TState = {
   directionAngle: number;
   viewAngle: number;
   viewRange: number;
+};
+
+type TDegMinutes = {
+  latDeg: number;
+  latMin: number;
+  lngDeg: number;
+  lngMin: number;
 };
 
 export const CameraMenu: React.FC<TProps> = ({ camera }) => {
@@ -34,9 +41,11 @@ export const CameraMenu: React.FC<TProps> = ({ camera }) => {
     viewRange,
   });
 
-  const [coords, setCoords] = useState<LatLngLiteral>({
-    lat: latLng[0],
-    lng: latLng[1],
+  const [coords, setCoords] = useState<TDegMinutes>({
+    latDeg: convertToDM(latLng[0])[0],
+    latMin: convertToDM(latLng[0])[1],
+    lngDeg: convertToDM(latLng[1])[0],
+    lngMin: convertToDM(latLng[1])[1],
   });
 
   const onChangeHandler = (
@@ -56,7 +65,10 @@ export const CameraMenu: React.FC<TProps> = ({ camera }) => {
       appActions.updateCamera({
         ...camera,
         ...params,
-        latLng: [coords.lat, coords.lng],
+        latLng: [
+          convertToLatlng(coords.latDeg, coords.latMin),
+          convertToLatlng(coords.lngDeg, coords.lngMin),
+        ],
       })
     );
   };
@@ -117,16 +129,28 @@ export const CameraMenu: React.FC<TProps> = ({ camera }) => {
           </ControlLabel>
           <InputGroup style={{ width: 360 }}>
             <Input
-              name="lat"
-              value={coords.lat.toString()}
+              name="latDeg"
+              value={coords.latDeg.toString()}
+              onChange={coordinatesHandler}
+            />
+            <InputGroup.Addon style={{ background: "white" }} />
+            <Input
+              name="latMin"
+              value={coords.latMin.toString()}
               onChange={coordinatesHandler}
             />
             <InputGroup.Addon style={{ background: "white" }}>
               ,
             </InputGroup.Addon>
             <Input
-              name="lng"
-              value={coords.lng.toString()}
+              name="lngDeg"
+              value={coords.lngDeg.toString()}
+              onChange={coordinatesHandler}
+            />
+            <InputGroup.Addon style={{ background: "white" }} />
+            <Input
+              name="lngMin"
+              value={coords.lngMin.toString()}
               onChange={coordinatesHandler}
             />
             {getCloseButton("latLng")}

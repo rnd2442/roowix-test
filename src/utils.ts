@@ -59,3 +59,13 @@ export const buildCamera = (latLng: LatLngTuple = [0, 0]): TCamera => ({
   viewAngle: 30,
   viewRange: 100,
 });
+
+export const convertToDM = (val: number): [number, number] => {
+  const degrees = Math.trunc(val);
+  const minutes = (val % 1) * 60;
+
+  return [degrees, minutes];
+};
+
+export const convertToLatlng = (degrees: number, minutes: number) =>
+  degrees + minutes / 60;
