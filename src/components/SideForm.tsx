@@ -1,6 +1,6 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Drawer } from "rsuite";
+import { Drawer, Button, Icon } from "rsuite";
 import { appActions } from "../redux/actions/app.actions";
 import { buildCamera } from "../utils";
 import { RootState } from "../types";
@@ -15,14 +15,27 @@ export const SideForm: React.FC = ({}) => {
 
   const camera = new Map(cameras).get(currentCameraId) || buildCamera();
 
+  const closeDrawerHandler = () => dispatch(appActions.closeCameraProps());
+
   return (
     <Drawer
       show={isOpened}
-      onHide={() => dispatch(appActions.closeCameraProps())}
+      onHide={closeDrawerHandler}
       backdrop={false}
       backdropClassName="transparent-backdrop"
+      size="sm"
       keyboard
     >
+      <Button
+        appearance="default"
+        style={{
+          transform: "translate(-50px, 200px)",
+          position: "absolute",
+        }}
+        onClick={closeDrawerHandler}
+      >
+        <Icon icon="right" />
+      </Button>
       <Drawer.Header>
         <Drawer.Title>{`Camera ${currentCameraId}`}</Drawer.Title>
       </Drawer.Header>
