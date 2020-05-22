@@ -58,12 +58,30 @@ export const Camera: React.FC<TProps> = ({ camera }) => {
     dispatch(appActions.updateCamera({ ...camera, ...params }));
   };
 
+  const getInput = (label: string, name: keyof TState) => {
+    return (
+      <FormGroup>
+        <ControlLabel style={{ textTransform: "uppercase" }}>
+          {label}
+        </ControlLabel>
+        <FormControl
+          name={name}
+          value={params[name].toString()}
+          onChange={onChangeHandler}
+          style={{ width: 160 }}
+        />
+      </FormGroup>
+    );
+  };
+
   return (
     <>
       <Drawer
         show={state}
         onHide={() => setState(false)}
+        backdrop={false}
         backdropClassName="transparent-backdrop"
+        keyboard
       >
         <Drawer.Header>
           <Drawer.Title>{`Camera ${id}`}</Drawer.Title>
@@ -71,33 +89,9 @@ export const Camera: React.FC<TProps> = ({ camera }) => {
         <Drawer.Body>
           <Form>
             <FlexboxGrid justify="space-between">
-              <FormGroup>
-                <ControlLabel>НАПРАВЛЕНИЕ(°)</ControlLabel>
-                <FormControl
-                  name="directionAngle"
-                  value={params.directionAngle.toString()}
-                  onChange={onChangeHandler}
-                  style={{ width: 160 }}
-                />
-              </FormGroup>
-              <FormGroup>
-                <ControlLabel>УГОЛ ОБЗОРА(°)</ControlLabel>
-                <FormControl
-                  name="viewAngle"
-                  value={params.viewAngle.toString()}
-                  onChange={onChangeHandler}
-                  style={{ width: 160 }}
-                />
-              </FormGroup>
-              <FormGroup>
-                <ControlLabel>ДАЛЬНОСТЬ ОБЗОРА(М)</ControlLabel>
-                <FormControl
-                  name="viewRange"
-                  value={params.viewRange.toString()}
-                  onChange={onChangeHandler}
-                  style={{ width: 160 }}
-                />
-              </FormGroup>
+              {getInput("направление(°)", "directionAngle")}
+              {getInput("угол обзора(°)", "viewAngle")}
+              {getInput("дальность обзора(м)", "viewRange")}
             </FlexboxGrid>
             <FlexboxGrid justify="space-between">
               <Button appearance="primary" onClick={submitHandler}>
