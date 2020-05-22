@@ -7,6 +7,9 @@ import {
   FormControl,
   ControlLabel,
   FlexboxGrid,
+  InputGroup,
+  Input,
+  Icon,
 } from "rsuite";
 import { appActions } from "../redux/actions/app.actions";
 import { TCamera } from "../types";
@@ -55,24 +58,68 @@ export const CameraMenu: React.FC<TProps> = ({ camera }) => {
     dispatch(appActions.removeCamera(id));
   };
 
+  const getCloseButton = () => (
+    <InputGroup.Button>
+      <Icon icon="close" />
+    </InputGroup.Button>
+  );
+
   const getInput = (label: string, name: keyof TState) => {
     return (
       <FormGroup>
         <ControlLabel style={{ textTransform: "uppercase" }}>
           {label}
         </ControlLabel>
-        <FormControl
-          name={name}
-          value={params[name].toString()}
-          onChange={onChangeHandler}
-          style={{ width: 160 }}
-        />
+        <InputGroup style={{ width: 160 }}>
+          <Input
+            name={name}
+            value={params[name].toString()}
+            onChange={onChangeHandler}
+          />
+          {getCloseButton()}
+        </InputGroup>
       </FormGroup>
     );
   };
 
+  const coordinatesHandler = (
+    value: string,
+    event: React.SyntheticEvent<HTMLElement>
+  ) => {
+    // @ts-ignore
+    const name = event.target.name;
+
+    console.log(name, value);
+    // if (!isNaN(+value)) {
+    //   setParams((prev) => ({ ...prev, [name]: +value }));
+    // }
+  };
+
   return (
     <Form>
+      <FlexboxGrid justify="space-between">
+        <FormGroup>
+          <ControlLabel style={{ textTransform: "uppercase" }}>
+            {"коррдинаты"}
+          </ControlLabel>
+          <InputGroup style={{ width: 360 }}>
+            <Input
+              name="lat"
+              value={params.latLng[0].toString()}
+              onChange={coordinatesHandler}
+            />
+            <InputGroup.Addon style={{ background: "white" }}>
+              ,
+            </InputGroup.Addon>
+            <Input
+              name="lng"
+              value={params.latLng[1].toString()}
+              onChange={coordinatesHandler}
+            />
+            {getCloseButton()}
+          </InputGroup>
+        </FormGroup>
+      </FlexboxGrid>
       <FlexboxGrid justify="space-between">
         {getInput("направление(°)", "directionAngle")}
         {getInput("угол обзора(°)", "viewAngle")}
