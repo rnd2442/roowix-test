@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Map } from "react-leaflet";
 import L, { CRS, LatLngTuple } from "leaflet";
@@ -39,8 +39,6 @@ export const PrimaryMap: React.FC = () => {
       map.fitBounds(image.getBounds());
     }
   }, []);
-
-  const [state, setState] = useState(false);
 
   return (
     <>

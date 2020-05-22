@@ -12,7 +12,7 @@ import {
 } from "rsuite";
 import { appActions } from "../redux/actions/app.actions";
 import { TCamera } from "../types";
-import { LatLngLiteral, LatLngTuple } from "leaflet";
+import { LatLngLiteral } from "leaflet";
 
 type TProps = {
   camera: TCamera;

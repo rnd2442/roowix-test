@@ -6,7 +6,7 @@ import { buildCamera } from "../utils";
 import { RootState } from "../types";
 import { CameraMenu } from "./CameraMenu";
 
-export const SideForm: React.FC = ({}) => {
+export const SideForm: React.FC = () => {
   const dispatch = useDispatch();
   const { sideFormProps, cameras } = useSelector((state: RootState) => {
     return state.app;
