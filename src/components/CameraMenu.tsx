@@ -18,7 +18,7 @@ type TProps = {
   camera: TCamera;
 };
 
-type TState = {
+type TParams = {
   directionAngle: number;
   viewAngle: number;
   viewRange: number;
@@ -35,25 +35,26 @@ export const CameraMenu: React.FC<TProps> = ({ camera }) => {
   const dispatch = useDispatch();
   const { id, latLng, directionAngle, viewAngle, viewRange } = camera;
 
-  const [params, setParams] = useState<TState>({
-    directionAngle,
-    viewAngle,
-    viewRange,
-  });
-
-  const [coords, setCoords] = useState<TDegMinutes>({
+  const initCoords = () => ({
     latDeg: convertToDM(latLng[0])[0].toString(),
     latMin: convertToDM(latLng[0])[1].toString() + ",",
     lngDeg: convertToDM(latLng[1])[0].toString(),
     lngMin: convertToDM(latLng[1])[1].toString(),
   });
 
+  const [params, setParams] = useState<TParams>({
+    directionAngle,
+    viewAngle,
+    viewRange,
+  });
+
+  const [coords, setCoords] = useState<TDegMinutes>(initCoords());
+
   const onChangeHandler = (
     value: string,
     event: React.SyntheticEvent<HTMLElement>
   ) => {
-    // @ts-ignore
-    const name = event.target.name;
+    const { name } = event.target as HTMLInputElement;
 
     if (!isNaN(+value)) {
       setParams((prev) => ({ ...prev, [name]: +value }));
@@ -80,33 +81,39 @@ export const CameraMenu: React.FC<TProps> = ({ camera }) => {
   };
 
   const clearInputHandler = (event: React.SyntheticEvent) => {
-    // @ts-ignore
-    const name = event.target.name;
-    console.log(event.target, name);
+    const { id } = event.currentTarget as HTMLAnchorElement;
+
+    const name = id.split("_")[1] as keyof TParams | "latLng";
+    if (name === "latLng") {
+      setCoords(initCoords());
+      return;
+    }
+
+    setParams((prev) => ({ ...prev, [name]: camera[name] }));
   };
 
-  const getCloseButton = (name: keyof TState | "latLng") => (
-    <InputGroup.Addon>
+  const getClearButton = (name: keyof TParams | "latLng") => (
+    <InputGroup.Addon style={{ background: "white" }}>
       <Icon
         className="clear-btn"
         icon="close-circle"
-        name={name}
+        id={`clearBtn_${name}`}
         onClick={clearInputHandler}
       />
     </InputGroup.Addon>
   );
 
-  const getInput = (label: string, name: keyof TState) => {
+  const getInput = (label: string, name: keyof TParams) => {
     return (
       <FormGroup>
         <ControlLabel className="cam-params-label">{label}</ControlLabel>
-        <InputGroup inside className="cam-params-group">
+        <InputGroup className="cam-params-group">
           <Input
             name={name}
             value={params[name].toString()}
             onChange={onChangeHandler}
           />
-          {getCloseButton(name)}
+          {getClearButton(name)}
         </InputGroup>
       </FormGroup>
     );
@@ -116,19 +123,17 @@ export const CameraMenu: React.FC<TProps> = ({ camera }) => {
     value: string,
     event: React.SyntheticEvent<HTMLElement>
   ) => {
-    // @ts-ignore
-    const name = event.target.name;
+    const { name } = event.target as HTMLInputElement;
 
     let preparedValue = value;
-    if (name === "latMin") {
-      preparedValue = value.split(",")[0];
-      console.log(value, preparedValue);
-    }
+
+    // Remove comma between lat anf lng before validation
+    if (name === "latMin") preparedValue = value.split(",")[0];
 
     if (preparedValue === "." || !isNaN(+preparedValue)) {
-      if (name === "latMin") {
-        preparedValue += ",";
-      }
+      // Restore comma between lat and lng
+      if (name === "latMin") preparedValue += ",";
+
       setCoords((prev) => ({ ...prev, [name]: preparedValue }));
     }
   };
@@ -159,6 +164,7 @@ export const CameraMenu: React.FC<TProps> = ({ camera }) => {
             {getLatLngInput("latMin")}
             {getLatLngInput("lngDeg")}
             {getLatLngInput("lngMin")}
+            {getClearButton("latLng")}
           </InputGroup>
         </FormGroup>
       </FlexboxGrid>
