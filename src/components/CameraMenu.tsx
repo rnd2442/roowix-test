@@ -86,9 +86,14 @@ export const CameraMenu: React.FC<TProps> = ({ camera }) => {
   };
 
   const getCloseButton = (name: keyof TState | "latLng") => (
-    <InputGroup.Button>
-      <Icon icon="close" />
-    </InputGroup.Button>
+    <InputGroup.Addon>
+      <Icon
+        className="clear-btn"
+        icon="close-circle"
+        name={name}
+        onClick={clearInputHandler}
+      />
+    </InputGroup.Addon>
   );
 
   const getInput = (label: string, name: keyof TState) => {
@@ -97,7 +102,7 @@ export const CameraMenu: React.FC<TProps> = ({ camera }) => {
         <ControlLabel style={{ textTransform: "uppercase" }}>
           {label}
         </ControlLabel>
-        <InputGroup style={{ width: 160 }}>
+        <InputGroup inside style={{ width: 88 }}>
           <Input
             name={name}
             value={params[name].toString()}
@@ -169,10 +174,16 @@ export const CameraMenu: React.FC<TProps> = ({ camera }) => {
         {getInput("дальность обзора(м)", "viewRange")}
       </FlexboxGrid>
       <FlexboxGrid justify="space-between">
-        <Button appearance="primary" onClick={submitHandler}>
+        <Button
+          onClick={submitHandler}
+          style={{ color: "white", background: "#00379e" }}
+        >
           ПРИМЕНИТЬ
         </Button>
-        <Button appearance="default" onClick={removeHandler}>
+        <Button
+          onClick={removeHandler}
+          style={{ color: "white", background: "#F44336" }}
+        >
           УДАЛИТЬ
         </Button>
       </FlexboxGrid>
