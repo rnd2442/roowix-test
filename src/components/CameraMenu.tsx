@@ -4,6 +4,7 @@ import { Button, FlexboxGrid, InputGroup, Input, Icon } from "rsuite";
 import { appActions } from "../redux/actions/app.actions";
 import { TCamera } from "../types";
 import { convertToDM, convertToLatlng } from "../utils";
+import { ValueInput } from "./ValueInput";
 
 type TProps = {
   camera: TCamera;
@@ -94,22 +95,6 @@ export const CameraMenu: React.FC<TProps> = ({ camera }) => {
     </InputGroup.Addon>
   );
 
-  const getInput = (label: string, name: keyof TParams) => {
-    return (
-      <div>
-        <label className="cam-params-label">{label}</label>
-        <InputGroup className="cam-params-group">
-          <Input
-            name={name}
-            value={params[name].toString()}
-            onChange={onChangeHandler}
-          />
-          {getClearButton(name)}
-        </InputGroup>
-      </div>
-    );
-  };
-
   const coordinatesHandler = (
     value: string,
     event: React.SyntheticEvent<HTMLElement>
@@ -154,9 +139,30 @@ export const CameraMenu: React.FC<TProps> = ({ camera }) => {
         {getClearButton("latLng")}
       </InputGroup>
       <FlexboxGrid justify="space-between">
-        {getInput("направление(°)", "directionAngle")}
-        {getInput("угол обзора(°)", "viewAngle")}
-        {getInput("дальность обзора(м)", "viewRange")}
+        <ValueInput
+          label="направление(°)"
+          name="directionAngle"
+          value={params.directionAngle.toString()}
+          callback={onChangeHandler}
+        >
+          {getClearButton("directionAngle")}
+        </ValueInput>
+        <ValueInput
+          label="угол обзора(°)"
+          name="viewAngle"
+          value={params.viewAngle.toString()}
+          callback={onChangeHandler}
+        >
+          {getClearButton("viewAngle")}
+        </ValueInput>
+        <ValueInput
+          label="дальность обзора(м)"
+          name="viewRange"
+          value={params.viewRange.toString()}
+          callback={onChangeHandler}
+        >
+          {getClearButton("viewRange")}
+        </ValueInput>
       </FlexboxGrid>
       <FlexboxGrid justify="space-between">
         <Button
