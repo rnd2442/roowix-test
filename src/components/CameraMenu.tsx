@@ -25,10 +25,10 @@ type TState = {
 };
 
 type TDegMinutes = {
-  latDeg: number;
-  latMin: number;
-  lngDeg: number;
-  lngMin: number;
+  latDeg: string;
+  latMin: string;
+  lngDeg: string;
+  lngMin: string;
 };
 
 export const CameraMenu: React.FC<TProps> = ({ camera }) => {
@@ -42,10 +42,10 @@ export const CameraMenu: React.FC<TProps> = ({ camera }) => {
   });
 
   const [coords, setCoords] = useState<TDegMinutes>({
-    latDeg: convertToDM(latLng[0])[0],
-    latMin: convertToDM(latLng[0])[1],
-    lngDeg: convertToDM(latLng[1])[0],
-    lngMin: convertToDM(latLng[1])[1],
+    latDeg: convertToDM(latLng[0])[0].toString(),
+    latMin: convertToDM(latLng[0])[1].toString(),
+    lngDeg: convertToDM(latLng[1])[0].toString(),
+    lngMin: convertToDM(latLng[1])[1].toString(),
   });
 
   const onChangeHandler = (
@@ -66,8 +66,8 @@ export const CameraMenu: React.FC<TProps> = ({ camera }) => {
         ...camera,
         ...params,
         latLng: [
-          convertToLatlng(coords.latDeg, coords.latMin),
-          convertToLatlng(coords.lngDeg, coords.lngMin),
+          convertToLatlng(+coords.latDeg, +coords.latMin),
+          convertToLatlng(+coords.lngDeg, +coords.lngMin),
         ],
       })
     );
@@ -115,18 +115,26 @@ export const CameraMenu: React.FC<TProps> = ({ camera }) => {
     // @ts-ignore
     const name = event.target.name;
 
-    if (!isNaN(+value)) {
+    if (value === "." || !isNaN(+value)) {
       setCoords((prev) => ({ ...prev, [name]: +value }));
     }
   };
 
-  const getLatLngInput = (name: keyof TDegMinutes) => {
+  const getLatLngInput = (
+    name: keyof TDegMinutes,
+    width: number,
+    delim: string = ""
+  ) => {
     const len = coords[name].toString().length;
     return (
       <Input
-        // style={{
-        //   width: `${len * 4}px`,
-        // }}
+        style={{
+          width: `${len * 8 + 5}px`,
+          paddingRight: 0,
+          paddingLeft: 0,
+          marginRight: 0,
+          marginLeft: 0,
+        }}
         // style={{
         //   width: `5px`,
         // }}
@@ -145,16 +153,10 @@ export const CameraMenu: React.FC<TProps> = ({ camera }) => {
             {"коррдинаты"}
           </ControlLabel>
           <InputGroup style={{ width: 360 }}>
-            {getLatLngInput("latDeg")}
-            <InputGroup.Addon style={{ background: "white" }} />
-            {getLatLngInput("latMin")}
-            <InputGroup.Addon style={{ background: "white" }}>
-              ,
-            </InputGroup.Addon>
-            {getLatLngInput("lngDeg")}
-            <InputGroup.Addon style={{ background: "white" }} />
-            {getLatLngInput("lngMin")}
-            {getCloseButton("latLng")}
+            {getLatLngInput("latDeg", 40)}
+            {getLatLngInput("latMin", 60)}
+            {getLatLngInput("lngDeg", 40)}
+            {getLatLngInput("lngMin", 60)}
           </InputGroup>
         </FormGroup>
       </FlexboxGrid>
