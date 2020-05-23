@@ -22,7 +22,6 @@ export const SideForm: React.FC = () => {
       show={isOpened}
       onHide={closeDrawerHandler}
       backdrop={false}
-      backdropClassName="transparent-backdrop"
       size="sm"
       keyboard
     >

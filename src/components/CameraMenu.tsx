@@ -133,16 +133,12 @@ export const CameraMenu: React.FC<TProps> = ({ camera }) => {
     }
   };
 
-  const getLatLngInput = (
-    name: keyof TDegMinutes,
-    width: number,
-    delim: string = ""
-  ) => {
+  const getLatLngInput = (name: keyof TDegMinutes) => {
     const len = coords[name].toString().length;
     return (
       <Input
         style={{
-          width: `${len * 8 + 5}px`,
+          width: `${len * 7 + 5}px`,
         }}
         name={name}
         value={coords[name].toString()}
@@ -159,10 +155,10 @@ export const CameraMenu: React.FC<TProps> = ({ camera }) => {
             {"коррдинаты"}
           </ControlLabel>
           <InputGroup className="cam-params-coordinates">
-            {getLatLngInput("latDeg", 40)}
-            {getLatLngInput("latMin", 60)}
-            {getLatLngInput("lngDeg", 40)}
-            {getLatLngInput("lngMin", 60)}
+            {getLatLngInput("latDeg")}
+            {getLatLngInput("latMin")}
+            {getLatLngInput("lngDeg")}
+            {getLatLngInput("lngMin")}
           </InputGroup>
         </FormGroup>
       </FlexboxGrid>

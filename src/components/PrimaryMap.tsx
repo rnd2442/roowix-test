@@ -42,7 +42,6 @@ export const PrimaryMap: React.FC = () => {
 
   return (
     <>
-      <SideForm />
       <Map
         ref={mapRef}
         minZoom={1}
@@ -55,6 +54,7 @@ export const PrimaryMap: React.FC = () => {
           <Camera key={camera.id} camera={camera} />
         ))}
       </Map>
+      <SideForm />
     </>
   );
 };

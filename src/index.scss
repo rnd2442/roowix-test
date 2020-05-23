@@ -26,27 +26,6 @@ code {
   right: 0;
 }
 
-.transparent-backdrop {
-  opacity: 0 !important;
-}
-
-.coord-group {
-  width: 305px;
-  margin-bottom: 15px;
-
-  input {
-    font-weight: bolder;
-    padding-left: 0;
-    padding-right: 0;
-    margin-left: 0;
-    margin-right: 0;
-  }
-
-  :first-child {
-    margin-left: 10px !important;
-  }
-}
-
 .cam-params {
   &-group {
     width: 100px !important;
@@ -94,4 +73,32 @@ code {
   border-radius: 6px;
   box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.13), 1px 2px 2px rgba(0, 0, 0, 0.1),
     -1px -2px 2px rgba(0, 0, 0, 0.05);
+}
+
+.camera {
+  &-circle {
+    fill: rgba(66, 147, 33, 100);
+    stroke: unset;
+
+    &:hover {
+      fill: red;
+      stroke: #f5a890;
+    }
+  }
+
+  &-polygon,
+  &-polyline {
+    cursor: unset;
+  }
+
+  &-polygon {
+    fill: rgba(96, 125, 139, 0.2);
+    stroke: unset;
+  }
+
+  &-polyline {
+    stroke: rgba(96, 125, 139, 1);
+    stroke-linecap: butt;
+    stroke-width: 1;
+  }
 }
