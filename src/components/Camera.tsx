@@ -1,9 +1,9 @@
-import React, { useRef, useEffect } from "react";
-import { useDispatch } from "react-redux";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Circle, Polygon, Polyline } from "react-leaflet";
 import { appActions } from "../redux/actions/app.actions";
 import { CAM_RADIUS, getPolygonVertexes } from "../utils";
-import { TCamera } from "../types";
+import { TCamera, RootState } from "../types";
 
 type TProps = {
   camera: TCamera;
@@ -12,6 +12,20 @@ type TProps = {
 export const Camera: React.FC<TProps> = ({ camera }) => {
   const { id, latLng, directionAngle, viewAngle, viewRange } = camera;
   const dispatch = useDispatch();
+
+  const { currentCameraId, isOpened } = useSelector((state: RootState) => {
+    return state.app.sideFormProps;
+  });
+
+  const [circleClass, setCircleClass] = useState("camera-circle");
+
+  useEffect(() => {
+    setCircleClass(
+      id === currentCameraId && isOpened
+        ? "camera-circle-toggled"
+        : "camera-circle"
+    );
+  }, [currentCameraId, isOpened]);
 
   const onClickHandler = () => {
     dispatch(appActions.openCameraProps(id));
@@ -27,11 +41,12 @@ export const Camera: React.FC<TProps> = ({ camera }) => {
   return (
     <>
       <Circle
+        key={`${id}-${circleClass}`}
         center={latLng}
         radius={CAM_RADIUS}
         fillOpacity={1}
         onClick={onClickHandler}
-        className="camera-circle"
+        className={circleClass}
       />
       <Polygon
         fillOpacity={1}
