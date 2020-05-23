@@ -6,6 +6,7 @@ import { TCamera } from "../types";
 import { convertToDM, convertToLatlng } from "../utils";
 import { ValueInput } from "./ValueInput";
 import { CoordInput } from "./CoordInput";
+import { ClearButton } from "./ClearButton";
 
 type TProps = {
   camera: TCamera;
@@ -117,17 +118,6 @@ export const CameraMenu: React.FC<TProps> = ({ camera }) => {
     "lngMin",
   ];
 
-  const getClearButton = (name: keyof TParams | "latLng") => (
-    <InputGroup.Addon style={{ background: "white" }}>
-      <Icon
-        className="clear-btn"
-        icon="close-circle"
-        id={`clearBtn_${name}`}
-        onClick={clearInputHandler}
-      />
-    </InputGroup.Addon>
-  );
-
   return (
     <>
       <label className="cam-params-label">{"коррдинаты"}</label>
@@ -140,7 +130,7 @@ export const CameraMenu: React.FC<TProps> = ({ camera }) => {
             callback={coordinatesHandler}
           />
         ))}
-        {getClearButton("latLng")}
+        <ClearButton name="latLng" callback={clearInputHandler} />
       </InputGroup>
       <FlexboxGrid justify="space-between">
         {inputs.map(([name, label]) => (
@@ -151,7 +141,7 @@ export const CameraMenu: React.FC<TProps> = ({ camera }) => {
             value={params[name].toString()}
             callback={onChangeHandler}
           >
-            {getClearButton(name)}
+            <ClearButton name={name} callback={clearInputHandler} />
           </ValueInput>
         ))}
       </FlexboxGrid>
