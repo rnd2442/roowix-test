@@ -64,7 +64,7 @@ export const convertToDM = (val: number): [number, number] => {
   const degrees = Math.trunc(val);
   const minutes = (val % 1) * 60;
 
-  return [degrees, +parseFloat(minutes.toString()).toFixed(6)];
+  return [degrees, minutes];
 };
 
 export const convertToLatlng = (degrees: number, minutes: number) =>

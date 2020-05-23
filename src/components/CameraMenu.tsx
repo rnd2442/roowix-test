@@ -1,15 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import {
-  Button,
-  Form,
-  FormGroup,
-  ControlLabel,
-  FlexboxGrid,
-  InputGroup,
-  Input,
-  Icon,
-} from "rsuite";
+import { Button, FlexboxGrid, InputGroup, Input, Icon } from "rsuite";
 import { appActions } from "../redux/actions/app.actions";
 import { TCamera } from "../types";
 import { convertToDM, convertToLatlng } from "../utils";
@@ -105,8 +96,8 @@ export const CameraMenu: React.FC<TProps> = ({ camera }) => {
 
   const getInput = (label: string, name: keyof TParams) => {
     return (
-      <FormGroup>
-        <ControlLabel className="cam-params-label">{label}</ControlLabel>
+      <div>
+        <label className="cam-params-label">{label}</label>
         <InputGroup className="cam-params-group">
           <Input
             name={name}
@@ -115,7 +106,7 @@ export const CameraMenu: React.FC<TProps> = ({ camera }) => {
           />
           {getClearButton(name)}
         </InputGroup>
-      </FormGroup>
+      </div>
     );
   };
 
@@ -153,21 +144,15 @@ export const CameraMenu: React.FC<TProps> = ({ camera }) => {
   };
 
   return (
-    <Form>
-      <FlexboxGrid justify="space-between">
-        <FormGroup>
-          <ControlLabel className="cam-params-label">
-            {"коррдинаты"}
-          </ControlLabel>
-          <InputGroup className="cam-params-coordinates">
-            {getLatLngInput("latDeg")}
-            {getLatLngInput("latMin")}
-            {getLatLngInput("lngDeg")}
-            {getLatLngInput("lngMin")}
-            {getClearButton("latLng")}
-          </InputGroup>
-        </FormGroup>
-      </FlexboxGrid>
+    <>
+      <label className="cam-params-label">{"коррдинаты"}</label>
+      <InputGroup className="cam-params-coordinates">
+        {getLatLngInput("latDeg")}
+        {getLatLngInput("latMin")}
+        {getLatLngInput("lngDeg")}
+        {getLatLngInput("lngMin")}
+        {getClearButton("latLng")}
+      </InputGroup>
       <FlexboxGrid justify="space-between">
         {getInput("направление(°)", "directionAngle")}
         {getInput("угол обзора(°)", "viewAngle")}
@@ -187,6 +172,6 @@ export const CameraMenu: React.FC<TProps> = ({ camera }) => {
           УДАЛИТЬ
         </Button>
       </FlexboxGrid>
-    </Form>
+    </>
   );
 };
