@@ -43,7 +43,7 @@ export const CameraMenu: React.FC<TProps> = ({ camera }) => {
 
   const [coords, setCoords] = useState<TDegMinutes>({
     latDeg: convertToDM(latLng[0])[0].toString(),
-    latMin: convertToDM(latLng[0])[1].toString(),
+    latMin: convertToDM(latLng[0])[1].toString() + ",",
     lngDeg: convertToDM(latLng[1])[0].toString(),
     lngMin: convertToDM(latLng[1])[1].toString(),
   });
@@ -61,12 +61,13 @@ export const CameraMenu: React.FC<TProps> = ({ camera }) => {
   };
 
   const submitHandler = () => {
+    const latMin = coords.latMin.split(",")[0];
     dispatch(
       appActions.updateCamera({
         ...camera,
         ...params,
         latLng: [
-          convertToLatlng(+coords.latDeg, +coords.latMin),
+          convertToLatlng(+coords.latDeg, +latMin),
           convertToLatlng(+coords.lngDeg, +coords.lngMin),
         ],
       })
@@ -115,8 +116,17 @@ export const CameraMenu: React.FC<TProps> = ({ camera }) => {
     // @ts-ignore
     const name = event.target.name;
 
-    if (value === "." || !isNaN(+value)) {
-      setCoords((prev) => ({ ...prev, [name]: +value }));
+    let preparedValue = value;
+    if (name === "latMin") {
+      preparedValue = value.split(",")[0];
+      console.log(value, preparedValue);
+    }
+
+    if (preparedValue === "." || !isNaN(+preparedValue)) {
+      if (name === "latMin") {
+        preparedValue += ",";
+      }
+      setCoords((prev) => ({ ...prev, [name]: preparedValue }));
     }
   };
 
@@ -130,14 +140,7 @@ export const CameraMenu: React.FC<TProps> = ({ camera }) => {
       <Input
         style={{
           width: `${len * 8 + 5}px`,
-          paddingRight: 0,
-          paddingLeft: 0,
-          marginRight: 0,
-          marginLeft: 0,
         }}
-        // style={{
-        //   width: `5px`,
-        // }}
         name={name}
         value={coords[name].toString()}
         onChange={coordinatesHandler}
@@ -152,7 +155,7 @@ export const CameraMenu: React.FC<TProps> = ({ camera }) => {
           <ControlLabel style={{ textTransform: "uppercase" }}>
             {"коррдинаты"}
           </ControlLabel>
-          <InputGroup style={{ width: 360 }}>
+          <InputGroup className="coord-group">
             {getLatLngInput("latDeg", 40)}
             {getLatLngInput("latMin", 60)}
             {getLatLngInput("lngDeg", 40)}
