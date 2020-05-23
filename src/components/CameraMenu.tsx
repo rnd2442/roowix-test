@@ -128,6 +128,12 @@ export const CameraMenu: React.FC<TProps> = ({ camera }) => {
     );
   };
 
+  const inputs: [keyof TParams, string][] = [
+    ["directionAngle", "направление(°)"],
+    ["viewAngle", "угол обзора(°)"],
+    ["viewRange", "дальность обзора(м)"],
+  ];
+
   return (
     <>
       <label className="cam-params-label">{"коррдинаты"}</label>
@@ -139,30 +145,17 @@ export const CameraMenu: React.FC<TProps> = ({ camera }) => {
         {getClearButton("latLng")}
       </InputGroup>
       <FlexboxGrid justify="space-between">
-        <ValueInput
-          label="направление(°)"
-          name="directionAngle"
-          value={params.directionAngle.toString()}
-          callback={onChangeHandler}
-        >
-          {getClearButton("directionAngle")}
-        </ValueInput>
-        <ValueInput
-          label="угол обзора(°)"
-          name="viewAngle"
-          value={params.viewAngle.toString()}
-          callback={onChangeHandler}
-        >
-          {getClearButton("viewAngle")}
-        </ValueInput>
-        <ValueInput
-          label="дальность обзора(м)"
-          name="viewRange"
-          value={params.viewRange.toString()}
-          callback={onChangeHandler}
-        >
-          {getClearButton("viewRange")}
-        </ValueInput>
+        {inputs.map(([name, label]) => (
+          <ValueInput
+            key={name}
+            label={label}
+            name={name}
+            value={params[name].toString()}
+            callback={onChangeHandler}
+          >
+            {getClearButton(name)}
+          </ValueInput>
+        ))}
       </FlexboxGrid>
       <FlexboxGrid justify="space-between">
         <Button
