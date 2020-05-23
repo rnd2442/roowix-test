@@ -99,10 +99,8 @@ export const CameraMenu: React.FC<TProps> = ({ camera }) => {
   const getInput = (label: string, name: keyof TState) => {
     return (
       <FormGroup>
-        <ControlLabel style={{ textTransform: "uppercase" }}>
-          {label}
-        </ControlLabel>
-        <InputGroup inside style={{ width: 88 }}>
+        <ControlLabel className="cam-params-label">{label}</ControlLabel>
+        <InputGroup inside className="cam-params-group">
           <Input
             name={name}
             value={params[name].toString()}
@@ -157,10 +155,10 @@ export const CameraMenu: React.FC<TProps> = ({ camera }) => {
     <Form>
       <FlexboxGrid justify="space-between">
         <FormGroup>
-          <ControlLabel style={{ textTransform: "uppercase" }}>
+          <ControlLabel className="cam-params-label">
             {"коррдинаты"}
           </ControlLabel>
-          <InputGroup className="coord-group">
+          <InputGroup className="cam-params-coordinates">
             {getLatLngInput("latDeg", 40)}
             {getLatLngInput("latMin", 60)}
             {getLatLngInput("lngDeg", 40)}
@@ -178,7 +176,7 @@ export const CameraMenu: React.FC<TProps> = ({ camera }) => {
           onClick={submitHandler}
           style={{ color: "white", background: "#00379e" }}
         >
-          ПРИМЕНИТЬ
+          СОХРАНИТЬ
         </Button>
         <Button
           onClick={removeHandler}
