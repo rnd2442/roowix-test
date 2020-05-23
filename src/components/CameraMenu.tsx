@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { Button, FlexboxGrid, InputGroup, Input, Icon } from "rsuite";
+import { Button, FlexboxGrid, InputGroup, Icon } from "rsuite";
 import { appActions } from "../redux/actions/app.actions";
 import { TCamera } from "../types";
 import { convertToDM, convertToLatlng } from "../utils";
 import { ValueInput } from "./ValueInput";
+import { CoordInput } from "./CoordInput";
 
 type TProps = {
   camera: TCamera;
@@ -84,17 +85,6 @@ export const CameraMenu: React.FC<TProps> = ({ camera }) => {
     setParams((prev) => ({ ...prev, [name]: camera[name] }));
   };
 
-  const getClearButton = (name: keyof TParams | "latLng") => (
-    <InputGroup.Addon style={{ background: "white" }}>
-      <Icon
-        className="clear-btn"
-        icon="close-circle"
-        id={`clearBtn_${name}`}
-        onClick={clearInputHandler}
-      />
-    </InputGroup.Addon>
-  );
-
   const coordinatesHandler = (
     value: string,
     event: React.SyntheticEvent<HTMLElement>
@@ -114,34 +104,42 @@ export const CameraMenu: React.FC<TProps> = ({ camera }) => {
     }
   };
 
-  const getLatLngInput = (name: keyof TDegMinutes) => {
-    const len = coords[name].toString().length;
-    return (
-      <Input
-        style={{
-          width: `${len * 7 + 5}px`,
-        }}
-        name={name}
-        value={coords[name].toString()}
-        onChange={coordinatesHandler}
-      />
-    );
-  };
-
   const inputs: [keyof TParams, string][] = [
     ["directionAngle", "направление(°)"],
     ["viewAngle", "угол обзора(°)"],
     ["viewRange", "дальность обзора(м)"],
   ];
 
+  const coordInputs: (keyof TDegMinutes)[] = [
+    "latDeg",
+    "latMin",
+    "lngDeg",
+    "lngMin",
+  ];
+
+  const getClearButton = (name: keyof TParams | "latLng") => (
+    <InputGroup.Addon style={{ background: "white" }}>
+      <Icon
+        className="clear-btn"
+        icon="close-circle"
+        id={`clearBtn_${name}`}
+        onClick={clearInputHandler}
+      />
+    </InputGroup.Addon>
+  );
+
   return (
     <>
       <label className="cam-params-label">{"коррдинаты"}</label>
       <InputGroup className="cam-params-coordinates">
-        {getLatLngInput("latDeg")}
-        {getLatLngInput("latMin")}
-        {getLatLngInput("lngDeg")}
-        {getLatLngInput("lngMin")}
+        {coordInputs.map((name) => (
+          <CoordInput
+            key={name}
+            name={name}
+            value={coords[name].toString()}
+            callback={coordinatesHandler}
+          />
+        ))}
         {getClearButton("latLng")}
       </InputGroup>
       <FlexboxGrid justify="space-between">

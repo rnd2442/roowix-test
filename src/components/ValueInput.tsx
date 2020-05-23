@@ -14,14 +14,12 @@ export const ValueInput: React.FC<TProps> = ({
   name,
   value,
   callback,
-}) => {
-  return (
-    <div>
-      <label className="cam-params-label">{label}</label>
-      <InputGroup className="cam-params-group">
-        <Input name={name} value={value} onChange={callback} />
-        {children}
-      </InputGroup>
-    </div>
-  );
-};
+}) => (
+  <div>
+    <label className="cam-params-label">{label}</label>
+    <InputGroup className="cam-params-group">
+      <Input name={name} value={value} onChange={callback} />
+      {children}
+    </InputGroup>
+  </div>
+);
