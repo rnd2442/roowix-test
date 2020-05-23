@@ -21,12 +21,6 @@ export const PrimaryMap: React.FC = () => {
 
   const mapRef = useRef<Map>(null);
 
-  const createCam = (event: L.LeafletMouseEvent) => {
-    dispatch(
-      appActions.createCamera(buildCamera([event.latlng.lat, event.latlng.lng]))
-    );
-  };
-
   useEffect(() => {
     // Set bounds after map has mounted
     if (mapRef && mapRef.current) {
@@ -39,6 +33,13 @@ export const PrimaryMap: React.FC = () => {
       map.fitBounds(image.getBounds());
     }
   }, []);
+
+  const createCam = (event: L.LeafletMouseEvent) => {
+    const newCam = buildCamera([event.latlng.lat, event.latlng.lng]);
+
+    dispatch(appActions.createCamera(newCam));
+    dispatch(appActions.openCameraProps(newCam.id));
+  };
 
   return (
     <>
