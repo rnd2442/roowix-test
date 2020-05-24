@@ -1,7 +1,7 @@
 import { LatLngTuple } from "leaflet";
 import { TCamera } from "./types";
 
-export const CAM_RADIUS = 5;
+export const CAM_RADIUS = 3;
 
 const toRadians = (angle: number) => angle * (Math.PI / 180);
 

@@ -8,9 +8,19 @@ import { RootState } from "../types";
 import { buildCamera } from "../utils";
 import { SideMenu } from "./SideMenu";
 
+const scale = 0.5;
+const oversize = 175;
+const a = 1165 * scale;
+const b = 1648 * scale;
+
 const bounds: LatLngTuple[] = [
-  [1165, 0],
-  [0, 1648],
+  [a, 0],
+  [0, b],
+];
+
+const maxBounds: LatLngTuple[] = [
+  [a + oversize, 0 - oversize],
+  [0 - oversize, b + oversize],
 ];
 
 export const PrimaryMap: React.FC = () => {
@@ -29,12 +39,13 @@ export const PrimaryMap: React.FC = () => {
   return (
     <>
       <Map
-        minZoom={1}
-        maxZoom={1}
+        minZoom={2}
+        maxZoom={2}
         crs={CRS.Simple}
         bounds={bounds}
-        maxBounds={bounds}
+        maxBounds={maxBounds}
         ondblclick={createCam}
+        doubleClickZoom={false}
       >
         <ImageOverlay
           bounds={bounds}
