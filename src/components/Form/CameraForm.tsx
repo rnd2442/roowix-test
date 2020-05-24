@@ -17,6 +17,10 @@ type TParams = {
   directionAngle: string;
   viewAngle: string;
   viewRange: string;
+  latDeg: string;
+  latMin: string;
+  lngDeg: string;
+  lngMin: string;
 };
 
 type TDegMinutes = {
@@ -36,29 +40,27 @@ const initCoords = (latLng: LatLngTuple) => ({
 const { StringType, NumberType } = Schema.Types;
 
 const whole = /^\d+$/;
-const WholeDecimal = /^\d*(\.\d+)?$/;
+const wholeDecimal = /^\d*(\.\d+)?$/;
 
 const negativeWhole = /^-?\d+$/;
 const negativeWholeDecimal = /^-?\d*(\.\d+)?$/;
 
+const errText = "Некорректное значение";
 const model = Schema.Model({
-  directionAngle: NumberType()
-    .pattern(negativeWhole, "wrong char")
-    .range(-360, 360)
-    .isRequired("wrong value"),
-  viewAngle: NumberType()
-    .pattern(whole, "wrong char")
-    .range(1, 179)
-    .isRequired("wrong value"),
-  viewRange: NumberType()
-    .pattern(WholeDecimal, "wrong char")
-    .isRequired("wrong value"),
+  directionAngle: NumberType().pattern(negativeWhole, errText).range(-360, 360),
+  viewAngle: NumberType().pattern(whole, errText).range(1, 179),
+  viewRange: NumberType().pattern(wholeDecimal, errText),
+  latDeg: NumberType().pattern(negativeWhole, errText),
+  latMin: NumberType().pattern(negativeWholeDecimal, errText),
+  lngDeg: NumberType().pattern(negativeWhole, errText),
+  lngMin: NumberType().pattern(negativeWholeDecimal, errText),
 });
 
 const initParams = (camera: TCamera): TParams => ({
   directionAngle: camera.directionAngle.toString(),
   viewAngle: camera.viewAngle.toString(),
   viewRange: camera.viewRange.toString(),
+  ...initCoords(camera.latLng),
 });
 
 export const CameraFrom: React.FC<TProps> = ({ camera }) => {
@@ -101,17 +103,36 @@ export const CameraFrom: React.FC<TProps> = ({ camera }) => {
   ) => {
     const { name } = event.target as HTMLInputElement;
 
+    // Remove extra comma between lat anf lng before validation
+    if (name === "latMin") value = value.split(",")[0];
+
     // Do not allow input letters and etc from keyboard
-    let permittedChars = /^[-0-9]{0,3}$/;
+    let permittedChars = /^\d+$/;
+
     switch (name as keyof TParams) {
+      case "directionAngle":
+        permittedChars = /^[-0-9]{0,3}$/;
+        break;
       case "viewAngle":
         permittedChars = /^\d{0,3}$/;
         break;
       case "viewRange":
-        permittedChars = WholeDecimal;
+        permittedChars = wholeDecimal;
+        break;
+      case "latDeg":
+      case "lngDeg":
+        permittedChars = /^[-0-9]{0,8}$/;
+        break;
+      case "latMin":
+      case "lngMin":
+        permittedChars = /^\d*(\.\d{0,8})?$/;
+        break;
     }
 
     if (permittedChars.test(value)) {
+      // Restore comma between lat and lng
+      if (name === "latMin") value += ",";
+
       setParams((prev) => ({ ...prev, [name]: value }));
     }
   };
@@ -119,9 +140,15 @@ export const CameraFrom: React.FC<TProps> = ({ camera }) => {
   const clearInputHandler = (event: React.SyntheticEvent) => {
     const { id } = event.currentTarget as HTMLAnchorElement;
 
-    const name = id.split("_")[1] as keyof TParams | "latLng";
+    const name = id.split("_")[1] as
+      | "directionAngle"
+      | "viewAngle"
+      | "viewRange"
+      | "latLng";
+
     if (name === "latLng") {
-      setCoords(initCoords(latLng));
+      // setCoords(initCoords(latLng));
+      setParams((prev) => ({ ...prev, ...initCoords(latLng) }));
       return;
     }
 
@@ -170,8 +197,8 @@ export const CameraFrom: React.FC<TProps> = ({ camera }) => {
               <CoordInput
                 key={name}
                 name={name}
-                value={coords[name].toString()}
-                callback={onChangeCoordsHandler}
+                value={params[name]}
+                callback={onChangeParamsHandler}
               />
             ))}
             <ClearButton name="latLng" callback={clearInputHandler} />
