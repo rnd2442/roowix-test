@@ -1,12 +1,5 @@
 import React from "react";
-import {
-  InputGroup,
-  Input,
-  FlexboxGrid,
-  Tooltip,
-  HelpBlock,
-  Whisper,
-} from "rsuite";
+import { InputGroup, Input, FlexboxGrid } from "rsuite";
 
 type TProps = {
   label: string;
@@ -21,7 +14,6 @@ export const ValueInput: React.FC<TProps> = ({
   label,
   name,
   value,
-  isError,
   callback,
   clearButton = null,
 }) => (
@@ -31,6 +23,5 @@ export const ValueInput: React.FC<TProps> = ({
       <Input name={name} value={value} onChange={callback} />
       {clearButton}
     </InputGroup>
-    {/* <Tooltip visible={isError}>Ошибка</Tooltip> */}
   </FlexboxGrid.Item>
 );

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { Button, FlexboxGrid, InputGroup } from "rsuite";
+import { Button, FlexboxGrid, InputGroup, Alert } from "rsuite";
 import { appActions } from "../../redux/actions/app.actions";
 import { TCamera, TParams } from "../../types";
 import { convertToLatlng, initCoords, initParams } from "../../utils";
@@ -89,18 +89,15 @@ export const CameraFrom: React.FC<TProps> = ({ camera }) => {
 
     const testAll = model.check({ ...params, latMin });
     setErrors(testAll);
-    console.log(testAll.latMin, params.latMin);
 
     // Do not apply changes if there is invalid field
-    let isValid = true;
     for (let key in testAll) {
       if (testAll[key as keyof TParams].hasError) {
-        isValid = false;
+        console.log(key, "is incorrect");
+        Alert.error("Введены некорректные данные");
         return;
       }
     }
-
-    if (!isValid) return;
 
     dispatch(
       appActions.updateCamera({
