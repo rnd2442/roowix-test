@@ -1,6 +1,6 @@
-import React, { useEffect, useRef } from "react";
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Map } from "react-leaflet";
+import { Map, ImageOverlay } from "react-leaflet";
 import L, { CRS, LatLngTuple } from "leaflet";
 import { appActions } from "../redux/actions/app.actions";
 import { Camera } from "./Camera";
@@ -19,21 +19,6 @@ export const PrimaryMap: React.FC = () => {
     return state.app;
   });
 
-  const mapRef = useRef<Map>(null);
-
-  useEffect(() => {
-    // Set bounds after map has mounted
-    if (mapRef && mapRef.current) {
-      // @ts-ignore
-      const map = mapRef.current.leafletElement;
-      const image = L.imageOverlay(
-        "https://static.tildacdn.com/tild3965-6139-4564-b262-303737393665/_8.jpg",
-        bounds
-      ).addTo(map);
-      map.fitBounds(image.getBounds());
-    }
-  }, []);
-
   const createCam = (event: L.LeafletMouseEvent) => {
     const newCam = buildCamera([event.latlng.lat, event.latlng.lng]);
 
@@ -44,13 +29,17 @@ export const PrimaryMap: React.FC = () => {
   return (
     <>
       <Map
-        ref={mapRef}
         minZoom={1}
         maxZoom={1}
         crs={CRS.Simple}
+        bounds={bounds}
         maxBounds={bounds}
         ondblclick={createCam}
       >
+        <ImageOverlay
+          bounds={bounds}
+          url="https://static.tildacdn.com/tild3965-6139-4564-b262-303737393665/_8.jpg"
+        />
         {cameras.map(([, camera]) => (
           <Camera key={camera.id} camera={camera} />
         ))}
