@@ -1,10 +1,11 @@
 import React from "react";
-import { InputGroup, Input, FlexboxGrid } from "rsuite";
+import { InputGroup, Input, FlexboxGrid, Tooltip } from "rsuite";
 
 type TProps = {
   label: string;
   name: string;
   value: string;
+  isError: boolean;
   callback: (value: string, event: React.SyntheticEvent<HTMLElement>) => void;
   clearButton?: JSX.Element;
 };
@@ -13,6 +14,7 @@ export const ValueInput: React.FC<TProps> = ({
   label,
   name,
   value,
+  isError,
   callback,
   clearButton = null,
 }) => (
@@ -22,5 +24,6 @@ export const ValueInput: React.FC<TProps> = ({
       <Input name={name} value={value} onChange={callback} />
       {clearButton}
     </InputGroup>
+    <Tooltip visible={isError}>Некорректное значение</Tooltip>
   </FlexboxGrid.Item>
 );

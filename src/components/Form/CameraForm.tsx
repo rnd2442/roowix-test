@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { Button, FlexboxGrid, InputGroup, Schema } from "rsuite";
+import { Button, FlexboxGrid, InputGroup } from "rsuite";
 import { appActions } from "../../redux/actions/app.actions";
 import { TCamera, TParams } from "../../types";
 import { convertToLatlng, initCoords, initParams } from "../../utils";
@@ -18,6 +18,7 @@ export const CameraFrom: React.FC<TProps> = ({ camera }) => {
   const { id, latLng } = camera;
 
   const [params, setParams] = useState<TParams>(initParams(camera));
+  const [errors, setErrors] = useState(model.check({ ...params }));
 
   useEffect(() => {
     // This refreshes inputs after submit
@@ -29,9 +30,10 @@ export const CameraFrom: React.FC<TProps> = ({ camera }) => {
     event: React.SyntheticEvent<HTMLElement>
   ) => {
     const { name } = event.target as HTMLInputElement;
+    let preparedVal = value;
 
     // Remove extra comma between lat and lng before validation
-    if (name === "latMin") value = value.split(",")[0];
+    if (name === "latMin") preparedVal = value.split(",")[0];
 
     // Do not allow input letters and etc from keyboard
     let permittedChars = /^\d+$/;
@@ -56,11 +58,11 @@ export const CameraFrom: React.FC<TProps> = ({ camera }) => {
         break;
     }
 
-    if (permittedChars.test(value)) {
+    if (permittedChars.test(preparedVal)) {
       // Restore comma between lat and lng
-      if (name === "latMin") value += ",";
+      if (name === "latMin") preparedVal += ",";
 
-      setParams((prev) => ({ ...prev, [name]: value }));
+      setParams((prev) => ({ ...prev, [name]: preparedVal }));
     }
   };
 
@@ -85,8 +87,20 @@ export const CameraFrom: React.FC<TProps> = ({ camera }) => {
     // Remove extra comma
     const latMin = params.latMin.split(",")[0];
 
-    const testAll = model.check({ ...params });
-    console.log(testAll);
+    const testAll = model.check({ ...params, latMin });
+    setErrors(testAll);
+    console.log(testAll.latMin, params.latMin);
+
+    // Do not apply changes if there is invalid field
+    let isValid = true;
+    for (let key in testAll) {
+      if (testAll[key as keyof TParams].hasError) {
+        isValid = false;
+        return;
+      }
+    }
+
+    if (!isValid) return;
 
     dispatch(
       appActions.updateCamera({
@@ -145,6 +159,7 @@ export const CameraFrom: React.FC<TProps> = ({ camera }) => {
             label={label}
             name={name}
             value={params[name]}
+            isError={errors[name].hasError}
             callback={onChangeParamsHandler}
             clearButton={
               <ClearButton name={name} callback={clearInputHandler} />
