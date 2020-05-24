@@ -127,19 +127,21 @@ export const CameraMenu: React.FC<TProps> = ({ camera }) => {
 
   return (
     <>
-      <label className="cam-params-label">{"коррдинаты"}</label>
-      <InputGroup className="cam-params-coordinates">
-        {coordInputs.map((name) => (
-          <CoordInput
-            key={name}
-            name={name}
-            value={coords[name].toString()}
-            callback={onChangeCoordsHandler}
-          />
-        ))}
-        <ClearButton name="latLng" callback={clearInputHandler} />
-      </InputGroup>
-      <FlexboxGrid justify="space-between">
+      <div className="cam-params">
+        <label className="cam-params-label">{"коррдинаты"}</label>
+        <InputGroup className="cam-params-coordinates">
+          {coordInputs.map((name) => (
+            <CoordInput
+              key={name}
+              name={name}
+              value={coords[name].toString()}
+              callback={onChangeCoordsHandler}
+            />
+          ))}
+          <ClearButton name="latLng" callback={clearInputHandler} />
+        </InputGroup>
+      </div>
+      <FlexboxGrid justify="space-between" className="cam-params">
         {paramInputs.map(([name, label]) => (
           <ValueInput
             key={name}
@@ -153,7 +155,7 @@ export const CameraMenu: React.FC<TProps> = ({ camera }) => {
           />
         ))}
       </FlexboxGrid>
-      <FlexboxGrid justify="space-between">
+      <FlexboxGrid justify="space-between" className="cam-params">
         <Button
           onClick={submitHandler}
           style={{ color: "white", background: "#00379e" }}
