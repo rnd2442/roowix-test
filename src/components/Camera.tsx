@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Circle, Polygon, Polyline } from "react-leaflet";
 import { appActions } from "../redux/actions/app.actions";
@@ -17,16 +17,6 @@ export const Camera: React.FC<TProps> = ({ camera }) => {
     return state.app.sideFormProps;
   });
 
-  const [circleClass, setCircleClass] = useState("camera-circle");
-
-  useEffect(() => {
-    setCircleClass(
-      id === currentCameraId && isOpened
-        ? "camera-circle-toggled"
-        : "camera-circle"
-    );
-  }, [currentCameraId, isOpened, id]);
-
   const onClickHandler = () => {
     dispatch(appActions.openCameraProps(id));
   };
@@ -37,6 +27,11 @@ export const Camera: React.FC<TProps> = ({ camera }) => {
     viewAngle,
     viewRange
   );
+
+  const circleClass =
+    id === currentCameraId && isOpened
+      ? "camera-circle-toggled"
+      : "camera-circle";
 
   return (
     <>
