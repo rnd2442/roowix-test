@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { Button, FlexboxGrid, InputGroup } from "rsuite";
+import { Button, FlexboxGrid, InputGroup, Schema } from "rsuite";
 import { appActions } from "../../redux/actions/app.actions";
 import { TCamera } from "../../types";
 import { convertToDM, convertToLatlng } from "../../utils";
@@ -31,6 +31,28 @@ const initCoords = (latLng: LatLngTuple) => ({
   latMin: convertToDM(latLng[0])[1].toString() + ",",
   lngDeg: convertToDM(latLng[1])[0].toString(),
   lngMin: convertToDM(latLng[1])[1].toString(),
+});
+
+const { StringType, NumberType } = Schema.Types;
+
+const whole = /^\d+$/;
+const WholeDecimal = /^\d*(\.\d+)?$/;
+
+const negativeWhole = /^-?\d+$/;
+const negativeWholeDecimal = /^-?\d*(\.\d+)?$/;
+
+const model = Schema.Model({
+  directionAngle: NumberType()
+    .pattern(negativeWhole, "Integer from -360 to 360")
+    .range(-360, 360)
+    .isRequired("Integer from -360 to 360"),
+  viewAngle: NumberType()
+    .pattern(whole, "Integer from 1 to 179")
+    .range(1, 179)
+    .isRequired("Integer from 1 to 179"),
+  viewRange: NumberType()
+    .pattern(WholeDecimal, "Positive Integer")
+    .isRequired("Positive Integer"),
 });
 
 export const CameraFrom: React.FC<TProps> = ({ camera }) => {
@@ -81,7 +103,17 @@ export const CameraFrom: React.FC<TProps> = ({ camera }) => {
   ) => {
     const { name } = event.target as HTMLInputElement;
 
+    // @ts-ignore
+    const test = model.checkForField(name, +value);
+
+    const testAll = model.check({ ...params });
+
+    // console.log(testAll);
+
+    const permittedChars = /^[-.0-9]*$/;
+    console.log(permittedChars.test(value));
     if (!isNaN(+value)) {
+      // if (permittedChars.test(value)) {
       setParams((prev) => ({ ...prev, [name]: +value }));
     }
   };
