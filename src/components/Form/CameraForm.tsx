@@ -14,9 +14,9 @@ type TProps = {
 };
 
 type TParams = {
-  directionAngle: number;
-  viewAngle: number;
-  viewRange: number;
+  directionAngle: string;
+  viewAngle: string;
+  viewRange: string;
 };
 
 type TDegMinutes = {
@@ -55,28 +55,26 @@ const model = Schema.Model({
     .isRequired("Positive Integer"),
 });
 
+const initParams = (camera: TCamera): TParams => ({
+  directionAngle: camera.directionAngle.toString(),
+  viewAngle: camera.viewAngle.toString(),
+  viewRange: camera.viewRange.toString(),
+});
+
 export const CameraFrom: React.FC<TProps> = ({ camera }) => {
   const dispatch = useDispatch();
-  const { id, latLng, directionAngle, viewAngle, viewRange } = camera;
+  const { id, latLng } = camera;
 
-  const [params, setParams] = useState<TParams>({
-    directionAngle,
-    viewAngle,
-    viewRange,
-  });
+  const [params, setParams] = useState<TParams>(initParams(camera));
 
   const [coords, setCoords] = useState<TDegMinutes>(initCoords(latLng));
 
   useEffect(() => {
     // This refreshes inputs after submit
-    setParams({
-      directionAngle,
-      viewAngle,
-      viewRange,
-    });
+    setParams(initParams(camera));
 
     setCoords(initCoords(latLng));
-  }, [latLng, directionAngle, viewAngle, viewRange]);
+  }, [latLng, camera]);
 
   const onChangeCoordsHandler = (
     value: string,
@@ -114,7 +112,7 @@ export const CameraFrom: React.FC<TProps> = ({ camera }) => {
     console.log(permittedChars.test(value));
     if (!isNaN(+value)) {
       // if (permittedChars.test(value)) {
-      setParams((prev) => ({ ...prev, [name]: +value }));
+      setParams((prev) => ({ ...prev, [name]: value }));
     }
   };
 
@@ -127,7 +125,7 @@ export const CameraFrom: React.FC<TProps> = ({ camera }) => {
       return;
     }
 
-    setParams((prev) => ({ ...prev, [name]: camera[name] }));
+    setParams((prev) => ({ ...prev, [name]: camera[name].toString() }));
   };
 
   const submitHandler = () => {
@@ -135,7 +133,9 @@ export const CameraFrom: React.FC<TProps> = ({ camera }) => {
     dispatch(
       appActions.updateCamera({
         ...camera,
-        ...params,
+        directionAngle: +params.directionAngle,
+        viewAngle: +params.viewAngle,
+        viewRange: +params.viewRange,
         latLng: [
           convertToLatlng(+coords.latDeg, +latMin),
           convertToLatlng(+coords.lngDeg, +coords.lngMin),
@@ -181,7 +181,7 @@ export const CameraFrom: React.FC<TProps> = ({ camera }) => {
             key={name}
             label={label}
             name={name}
-            value={params[name].toString()}
+            value={params[name]}
             callback={onChangeParamsHandler}
             clearButton={
               <ClearButton name={name} callback={clearInputHandler} />
