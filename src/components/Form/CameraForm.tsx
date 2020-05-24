@@ -43,16 +43,16 @@ const negativeWholeDecimal = /^-?\d*(\.\d+)?$/;
 
 const model = Schema.Model({
   directionAngle: NumberType()
-    .pattern(negativeWhole, "Integer from -360 to 360")
+    .pattern(negativeWhole, "wrong char")
     .range(-360, 360)
-    .isRequired("Integer from -360 to 360"),
+    .isRequired("wrong value"),
   viewAngle: NumberType()
-    .pattern(whole, "Integer from 1 to 179")
+    .pattern(whole, "wrong char")
     .range(1, 179)
-    .isRequired("Integer from 1 to 179"),
+    .isRequired("wrong value"),
   viewRange: NumberType()
-    .pattern(WholeDecimal, "Positive Integer")
-    .isRequired("Positive Integer"),
+    .pattern(WholeDecimal, "wrong char")
+    .isRequired("wrong value"),
 });
 
 const initParams = (camera: TCamera): TParams => ({
@@ -101,17 +101,17 @@ export const CameraFrom: React.FC<TProps> = ({ camera }) => {
   ) => {
     const { name } = event.target as HTMLInputElement;
 
-    // @ts-ignore
-    const test = model.checkForField(name, +value);
+    // Do not allow input letters and etc from keyboard
+    let permittedChars = /^[-0-9]{0,3}$/;
+    switch (name as keyof TParams) {
+      case "viewAngle":
+        permittedChars = /^\d{0,3}$/;
+        break;
+      case "viewRange":
+        permittedChars = WholeDecimal;
+    }
 
-    const testAll = model.check({ ...params });
-
-    // console.log(testAll);
-
-    const permittedChars = /^[-.0-9]*$/;
-    console.log(permittedChars.test(value));
-    if (!isNaN(+value)) {
-      // if (permittedChars.test(value)) {
+    if (permittedChars.test(value)) {
       setParams((prev) => ({ ...prev, [name]: value }));
     }
   };
@@ -129,6 +129,9 @@ export const CameraFrom: React.FC<TProps> = ({ camera }) => {
   };
 
   const submitHandler = () => {
+    const testAll = model.check({ ...params });
+    console.log(testAll);
+
     const latMin = coords.latMin.split(",")[0];
     dispatch(
       appActions.updateCamera({
