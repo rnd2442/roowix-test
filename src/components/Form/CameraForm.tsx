@@ -9,6 +9,8 @@ import { CoordInput } from "./CoordInput";
 import { ClearButton } from "./ClearButton";
 import { LatLngTuple } from "leaflet";
 
+const { NumberType } = Schema.Types;
+
 type TProps = {
   camera: TCamera;
 };
@@ -23,27 +25,20 @@ type TParams = {
   lngMin: string;
 };
 
-type TDegMinutes = {
-  latDeg: string;
-  latMin: string;
-  lngDeg: string;
-  lngMin: string;
-};
-
 const initCoords = (latLng: LatLngTuple) => ({
   latDeg: convertToDM(latLng[0])[0].toString(),
-  latMin: convertToDM(latLng[0])[1].toString() + ",",
+  latMin: convertToDM(latLng[0])[1].toFixed(5) + ",",
   lngDeg: convertToDM(latLng[1])[0].toString(),
-  lngMin: convertToDM(latLng[1])[1].toString(),
+  lngMin: convertToDM(latLng[1])[1].toFixed(5),
 });
-
-const { StringType, NumberType } = Schema.Types;
 
 const whole = /^\d+$/;
 const wholeDecimal = /^\d*(\.\d+)?$/;
 
 const negativeWhole = /^-?\d+$/;
 const negativeWholeDecimal = /^-?\d*(\.\d+)?$/;
+
+const testRegex = /[0-9]\d*(\.\d+)?/;
 
 const errText = "Некорректное значение";
 const model = Schema.Model({
@@ -69,33 +64,10 @@ export const CameraFrom: React.FC<TProps> = ({ camera }) => {
 
   const [params, setParams] = useState<TParams>(initParams(camera));
 
-  const [coords, setCoords] = useState<TDegMinutes>(initCoords(latLng));
-
   useEffect(() => {
     // This refreshes inputs after submit
     setParams(initParams(camera));
-
-    setCoords(initCoords(latLng));
-  }, [latLng, camera]);
-
-  const onChangeCoordsHandler = (
-    value: string,
-    event: React.SyntheticEvent<HTMLElement>
-  ) => {
-    const { name } = event.target as HTMLInputElement;
-
-    let preparedValue = value;
-
-    // Remove extra comma between lat anf lng before validation
-    if (name === "latMin") preparedValue = value.split(",")[0];
-
-    if (preparedValue === "." || !isNaN(+preparedValue)) {
-      // Restore comma between lat and lng
-      if (name === "latMin") preparedValue += ",";
-
-      setCoords((prev) => ({ ...prev, [name]: preparedValue }));
-    }
-  };
+  }, [camera]);
 
   const onChangeParamsHandler = (
     value: string,
@@ -111,7 +83,7 @@ export const CameraFrom: React.FC<TProps> = ({ camera }) => {
 
     switch (name as keyof TParams) {
       case "directionAngle":
-        permittedChars = /^[-0-9]{0,3}$/;
+        permittedChars = /^-?\d{0,3}$/;
         break;
       case "viewAngle":
         permittedChars = /^\d{0,3}$/;
@@ -121,11 +93,11 @@ export const CameraFrom: React.FC<TProps> = ({ camera }) => {
         break;
       case "latDeg":
       case "lngDeg":
-        permittedChars = /^[-0-9]{0,8}$/;
+        permittedChars = /^-?\d{0,8}$/;
         break;
       case "latMin":
       case "lngMin":
-        permittedChars = /^\d*(\.\d{0,8})?$/;
+        permittedChars = /^-?\d*(\.\d{0,8})?$/;
         break;
     }
 
@@ -156,10 +128,12 @@ export const CameraFrom: React.FC<TProps> = ({ camera }) => {
   };
 
   const submitHandler = () => {
+    // Remove extra comma
+    const latMin = params.latMin.split(",")[0];
+
     const testAll = model.check({ ...params });
     console.log(testAll);
 
-    const latMin = coords.latMin.split(",")[0];
     dispatch(
       appActions.updateCamera({
         ...camera,
@@ -167,8 +141,8 @@ export const CameraFrom: React.FC<TProps> = ({ camera }) => {
         viewAngle: +params.viewAngle,
         viewRange: +params.viewRange,
         latLng: [
-          convertToLatlng(+coords.latDeg, +latMin),
-          convertToLatlng(+coords.lngDeg, +coords.lngMin),
+          convertToLatlng(+params.latDeg, +latMin),
+          convertToLatlng(+params.lngDeg, +params.lngMin),
         ],
       })
     );
@@ -179,7 +153,12 @@ export const CameraFrom: React.FC<TProps> = ({ camera }) => {
     dispatch(appActions.removeCamera(id));
   };
 
-  const coordInputs = Object.keys(coords) as (keyof TDegMinutes)[];
+  const coordInputs = ["latDeg", "latMin", "lngDeg", "lngMin"] as (
+    | "latDeg"
+    | "latMin"
+    | "lngDeg"
+    | "lngMin"
+  )[];
 
   const paramInputs: [keyof TParams, string][] = [
     ["directionAngle", "направление(°)"],
