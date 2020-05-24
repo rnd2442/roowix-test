@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { Button, FlexboxGrid, InputGroup } from "rsuite";
 import { appActions } from "../redux/actions/app.actions";
@@ -7,6 +7,7 @@ import { convertToDM, convertToLatlng } from "../utils";
 import { ValueInput } from "./ValueInput";
 import { CoordInput } from "./CoordInput";
 import { ClearButton } from "./ClearButton";
+import { LatLngTuple } from "leaflet";
 
 type TProps = {
   camera: TCamera;
@@ -25,16 +26,16 @@ type TDegMinutes = {
   lngMin: string;
 };
 
+const initCoords = (latLng: LatLngTuple) => ({
+  latDeg: convertToDM(latLng[0])[0].toString(),
+  latMin: convertToDM(latLng[0])[1].toString() + ",",
+  lngDeg: convertToDM(latLng[1])[0].toString(),
+  lngMin: convertToDM(latLng[1])[1].toString(),
+});
+
 export const CameraMenu: React.FC<TProps> = ({ camera }) => {
   const dispatch = useDispatch();
   const { id, latLng, directionAngle, viewAngle, viewRange } = camera;
-
-  const initCoords = () => ({
-    latDeg: convertToDM(latLng[0])[0].toString(),
-    latMin: convertToDM(latLng[0])[1].toString() + ",",
-    lngDeg: convertToDM(latLng[1])[0].toString(),
-    lngMin: convertToDM(latLng[1])[1].toString(),
-  });
 
   const [params, setParams] = useState<TParams>({
     directionAngle,
@@ -42,9 +43,39 @@ export const CameraMenu: React.FC<TProps> = ({ camera }) => {
     viewRange,
   });
 
-  const [coords, setCoords] = useState<TDegMinutes>(initCoords());
+  const [coords, setCoords] = useState<TDegMinutes>(initCoords(latLng));
 
-  const onChangeHandler = (
+  useEffect(() => {
+    // This refreshes input fileds after submit
+    setParams({
+      directionAngle,
+      viewAngle,
+      viewRange,
+    });
+
+    setCoords(initCoords(latLng));
+  }, [camera]);
+
+  const onChangeCoordsHandler = (
+    value: string,
+    event: React.SyntheticEvent<HTMLElement>
+  ) => {
+    const { name } = event.target as HTMLInputElement;
+
+    let preparedValue = value;
+
+    // Remove comma between lat anf lng before validation
+    if (name === "latMin") preparedValue = value.split(",")[0];
+
+    if (preparedValue === "." || !isNaN(+preparedValue)) {
+      // Restore comma between lat and lng
+      if (name === "latMin") preparedValue += ",";
+
+      setCoords((prev) => ({ ...prev, [name]: preparedValue }));
+    }
+  };
+
+  const onChangeParamsHandler = (
     value: string,
     event: React.SyntheticEvent<HTMLElement>
   ) => {
@@ -53,6 +84,18 @@ export const CameraMenu: React.FC<TProps> = ({ camera }) => {
     if (!isNaN(+value)) {
       setParams((prev) => ({ ...prev, [name]: +value }));
     }
+  };
+
+  const clearInputHandler = (event: React.SyntheticEvent) => {
+    const { id } = event.currentTarget as HTMLAnchorElement;
+
+    const name = id.split("_")[1] as keyof TParams | "latLng";
+    if (name === "latLng") {
+      setCoords(initCoords(latLng));
+      return;
+    }
+
+    setParams((prev) => ({ ...prev, [name]: camera[name] }));
   };
 
   const submitHandler = () => {
@@ -74,38 +117,7 @@ export const CameraMenu: React.FC<TProps> = ({ camera }) => {
     dispatch(appActions.removeCamera(id));
   };
 
-  const clearInputHandler = (event: React.SyntheticEvent) => {
-    const { id } = event.currentTarget as HTMLAnchorElement;
-
-    const name = id.split("_")[1] as keyof TParams | "latLng";
-    if (name === "latLng") {
-      setCoords(initCoords());
-      return;
-    }
-
-    setParams((prev) => ({ ...prev, [name]: camera[name] }));
-  };
-
-  const coordinatesHandler = (
-    value: string,
-    event: React.SyntheticEvent<HTMLElement>
-  ) => {
-    const { name } = event.target as HTMLInputElement;
-
-    let preparedValue = value;
-
-    // Remove comma between lat anf lng before validation
-    if (name === "latMin") preparedValue = value.split(",")[0];
-
-    if (preparedValue === "." || !isNaN(+preparedValue)) {
-      // Restore comma between lat and lng
-      if (name === "latMin") preparedValue += ",";
-
-      setCoords((prev) => ({ ...prev, [name]: preparedValue }));
-    }
-  };
-
-  const inputs: [keyof TParams, string][] = [
+  const paramInputs: [keyof TParams, string][] = [
     ["directionAngle", "направление(°)"],
     ["viewAngle", "угол обзора(°)"],
     ["viewRange", "дальность обзора(м)"],
@@ -122,19 +134,19 @@ export const CameraMenu: React.FC<TProps> = ({ camera }) => {
             key={name}
             name={name}
             value={coords[name].toString()}
-            callback={coordinatesHandler}
+            callback={onChangeCoordsHandler}
           />
         ))}
         <ClearButton name="latLng" callback={clearInputHandler} />
       </InputGroup>
       <FlexboxGrid justify="space-between">
-        {inputs.map(([name, label]) => (
+        {paramInputs.map(([name, label]) => (
           <ValueInput
             key={name}
             label={label}
             name={name}
             value={params[name].toString()}
-            callback={onChangeHandler}
+            callback={onChangeParamsHandler}
             clearButton={
               <ClearButton name={name} callback={clearInputHandler} />
             }
