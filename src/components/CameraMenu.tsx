@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { Button, FlexboxGrid, InputGroup, Icon } from "rsuite";
+import { Button, FlexboxGrid, InputGroup } from "rsuite";
 import { appActions } from "../redux/actions/app.actions";
 import { TCamera } from "../types";
 import { convertToDM, convertToLatlng } from "../utils";
@@ -111,12 +111,7 @@ export const CameraMenu: React.FC<TProps> = ({ camera }) => {
     ["viewRange", "дальность обзора(м)"],
   ];
 
-  const coordInputs: (keyof TDegMinutes)[] = [
-    "latDeg",
-    "latMin",
-    "lngDeg",
-    "lngMin",
-  ];
+  const coordInputs = Object.keys(coords) as (keyof TDegMinutes)[];
 
   return (
     <>
@@ -140,9 +135,10 @@ export const CameraMenu: React.FC<TProps> = ({ camera }) => {
             name={name}
             value={params[name].toString()}
             callback={onChangeHandler}
-          >
-            <ClearButton name={name} callback={clearInputHandler} />
-          </ValueInput>
+            clearButton={
+              <ClearButton name={name} callback={clearInputHandler} />
+            }
+          />
         ))}
       </FlexboxGrid>
       <FlexboxGrid justify="space-between">
