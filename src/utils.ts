@@ -1,5 +1,5 @@
 import { LatLngTuple } from "leaflet";
-import { TCamera } from "./types";
+import { TCamera, TParams } from "./types";
 
 export const CAM_RADIUS = 3;
 
@@ -69,3 +69,17 @@ export const convertToDM = (val: number): [number, number] => {
 
 export const convertToLatlng = (degrees: number, minutes: number) =>
   degrees + minutes / 60;
+
+export const initCoords = (latLng: LatLngTuple) => ({
+  latDeg: convertToDM(latLng[0])[0].toString(),
+  latMin: convertToDM(latLng[0])[1].toFixed(5) + ",",
+  lngDeg: convertToDM(latLng[1])[0].toString(),
+  lngMin: convertToDM(latLng[1])[1].toFixed(5),
+});
+
+export const initParams = (camera: TCamera): TParams => ({
+  directionAngle: camera.directionAngle.toString(),
+  viewAngle: camera.viewAngle.toString(),
+  viewRange: camera.viewRange.toString(),
+  ...initCoords(camera.latLng),
+});

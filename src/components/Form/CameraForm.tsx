@@ -2,61 +2,16 @@ import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { Button, FlexboxGrid, InputGroup, Schema } from "rsuite";
 import { appActions } from "../../redux/actions/app.actions";
-import { TCamera } from "../../types";
-import { convertToDM, convertToLatlng } from "../../utils";
+import { TCamera, TParams } from "../../types";
+import { convertToLatlng, initCoords, initParams } from "../../utils";
 import { ValueInput } from "./ValueInput";
 import { CoordInput } from "./CoordInput";
 import { ClearButton } from "./ClearButton";
-import { LatLngTuple } from "leaflet";
-
-const { NumberType } = Schema.Types;
+import { model } from "./schema";
 
 type TProps = {
   camera: TCamera;
 };
-
-type TParams = {
-  directionAngle: string;
-  viewAngle: string;
-  viewRange: string;
-  latDeg: string;
-  latMin: string;
-  lngDeg: string;
-  lngMin: string;
-};
-
-const initCoords = (latLng: LatLngTuple) => ({
-  latDeg: convertToDM(latLng[0])[0].toString(),
-  latMin: convertToDM(latLng[0])[1].toFixed(5) + ",",
-  lngDeg: convertToDM(latLng[1])[0].toString(),
-  lngMin: convertToDM(latLng[1])[1].toFixed(5),
-});
-
-const whole = /^\d+$/;
-const wholeDecimal = /^\d*(\.\d+)?$/;
-
-const negativeWhole = /^-?\d+$/;
-const negativeWholeDecimal = /^-?\d*(\.\d+)?$/;
-
-const testRegex = /[0-9]\d*(\.\d+)?/;
-
-const errText = "Некорректное значение";
-const model = Schema.Model({
-  directionAngle: NumberType().pattern(negativeWhole, errText).range(-360, 360),
-  viewAngle: NumberType().pattern(whole, errText).range(1, 179),
-  viewRange: NumberType().pattern(wholeDecimal, errText),
-  latDeg: NumberType().pattern(negativeWhole, errText),
-  latMin: NumberType().pattern(negativeWholeDecimal, errText),
-  lngDeg: NumberType().pattern(negativeWhole, errText),
-  lngMin: NumberType().pattern(negativeWholeDecimal, errText),
-});
-
-const initParams = (camera: TCamera): TParams => ({
-  directionAngle: camera.directionAngle.toString(),
-  viewAngle: camera.viewAngle.toString(),
-  viewRange: camera.viewRange.toString(),
-  ...initCoords(camera.latLng),
-});
 
 export const CameraFrom: React.FC<TProps> = ({ camera }) => {
   const dispatch = useDispatch();
@@ -75,7 +30,7 @@ export const CameraFrom: React.FC<TProps> = ({ camera }) => {
   ) => {
     const { name } = event.target as HTMLInputElement;
 
-    // Remove extra comma between lat anf lng before validation
+    // Remove extra comma between lat and lng before validation
     if (name === "latMin") value = value.split(",")[0];
 
     // Do not allow input letters and etc from keyboard
@@ -89,7 +44,7 @@ export const CameraFrom: React.FC<TProps> = ({ camera }) => {
         permittedChars = /^\d{0,3}$/;
         break;
       case "viewRange":
-        permittedChars = wholeDecimal;
+        permittedChars = /^\d*(\.\d+)?$/;
         break;
       case "latDeg":
       case "lngDeg":
@@ -97,7 +52,7 @@ export const CameraFrom: React.FC<TProps> = ({ camera }) => {
         break;
       case "latMin":
       case "lngMin":
-        permittedChars = /^-?\d*(\.\d{0,8})?$/;
+        permittedChars = /^-?\d{0,8}(\.\d{0,8})?$/;
         break;
     }
 
@@ -119,7 +74,6 @@ export const CameraFrom: React.FC<TProps> = ({ camera }) => {
       | "latLng";
 
     if (name === "latLng") {
-      // setCoords(initCoords(latLng));
       setParams((prev) => ({ ...prev, ...initCoords(latLng) }));
       return;
     }

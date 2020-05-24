@@ -9,4 +9,14 @@ export type TCamera = {
   readonly viewRange: number;
 };
 
+export type TParams = {
+  directionAngle: string;
+  viewAngle: string;
+  viewRange: string;
+  latDeg: string;
+  latMin: string;
+  lngDeg: string;
+  lngMin: string;
+};
+
 export type RootState = ReturnType<typeof rootReducer>;
