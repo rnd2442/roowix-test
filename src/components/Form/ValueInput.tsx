@@ -16,7 +16,7 @@ export const ValueInput: React.FC<TProps> = ({
   callback,
   clearButton = null,
 }) => (
-  <FlexboxGrid.Item colspan={5}>
+  <FlexboxGrid.Item colspan={4}>
     <label className="cam-params-label">{label}</label>
     <InputGroup className="cam-params-group">
       <Input name={name} value={value} onChange={callback} />

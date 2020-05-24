@@ -4,7 +4,7 @@ import { Drawer, Icon } from "rsuite";
 import { appActions } from "../redux/actions/app.actions";
 import { buildCamera } from "../utils";
 import { RootState } from "../types";
-import { CameraFrom } from "./Form/CameraForm";
+import { CameraFrom } from "./form/CameraForm";
 
 export const SideMenu: React.FC = () => {
   const dispatch = useDispatch();

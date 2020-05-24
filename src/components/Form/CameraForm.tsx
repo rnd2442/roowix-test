@@ -46,7 +46,7 @@ export const CameraFrom: React.FC<TProps> = ({ camera }) => {
   const [coords, setCoords] = useState<TDegMinutes>(initCoords(latLng));
 
   useEffect(() => {
-    // This refreshes input fileds after submit
+    // This refreshes inputs after submit
     setParams({
       directionAngle,
       viewAngle,
@@ -54,7 +54,7 @@ export const CameraFrom: React.FC<TProps> = ({ camera }) => {
     });
 
     setCoords(initCoords(latLng));
-  }, [camera]);
+  }, [latLng, directionAngle, viewAngle, viewRange]);
 
   const onChangeCoordsHandler = (
     value: string,
@@ -64,7 +64,7 @@ export const CameraFrom: React.FC<TProps> = ({ camera }) => {
 
     let preparedValue = value;
 
-    // Remove comma between lat anf lng before validation
+    // Remove extra comma between lat anf lng before validation
     if (name === "latMin") preparedValue = value.split(",")[0];
 
     if (preparedValue === "." || !isNaN(+preparedValue)) {
@@ -117,18 +117,18 @@ export const CameraFrom: React.FC<TProps> = ({ camera }) => {
     dispatch(appActions.removeCamera(id));
   };
 
+  const coordInputs = Object.keys(coords) as (keyof TDegMinutes)[];
+
   const paramInputs: [keyof TParams, string][] = [
     ["directionAngle", "направление(°)"],
     ["viewAngle", "угол обзора(°)"],
     ["viewRange", "дальность обзора(м)"],
   ];
 
-  const coordInputs = Object.keys(coords) as (keyof TDegMinutes)[];
-
   return (
     <>
       <FlexboxGrid justify="start" className="cam-params">
-        <FlexboxGrid.Item colspan={15}>
+        <FlexboxGrid.Item colspan={14}>
           <label className="cam-params-label">{"коррдинаты"}</label>
           <InputGroup className="cam-params-coordinates">
             {coordInputs.map((name) => (
