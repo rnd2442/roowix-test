@@ -30,8 +30,6 @@ code {
   margin-top: 30px;
 
   &-group {
-    width: 100px !important;
-
     input {
       font-weight: bolder;
     }
@@ -43,9 +41,6 @@ code {
   }
 
   &-coordinates {
-    width: 305px;
-    margin-bottom: 15px;
-
     input {
       font-weight: bolder;
       padding-left: 0;
@@ -88,12 +83,13 @@ code {
     stroke: unset;
 
     &:hover {
-      @include toggled-circle;
+      fill: $primary-color-hover;
     }
   }
 
   &-circle-toggled {
-    @include toggled-circle;
+    fill: red;
+    stroke: white;
   }
 
   &-polygon,
@@ -102,7 +98,7 @@ code {
   }
 
   &-polygon {
-    fill: rgba(96, 125, 139, 0.2);
+    fill: rgba(96, 125, 139, 0.4);
     stroke: unset;
   }
 

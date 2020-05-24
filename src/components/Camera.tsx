@@ -25,7 +25,7 @@ export const Camera: React.FC<TProps> = ({ camera }) => {
         ? "camera-circle-toggled"
         : "camera-circle"
     );
-  }, [currentCameraId, isOpened]);
+  }, [currentCameraId, isOpened, id]);
 
   const onClickHandler = () => {
     dispatch(appActions.openCameraProps(id));

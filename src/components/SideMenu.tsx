@@ -1,12 +1,12 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Drawer, Button, Icon } from "rsuite";
+import { Drawer, Icon } from "rsuite";
 import { appActions } from "../redux/actions/app.actions";
 import { buildCamera } from "../utils";
 import { RootState } from "../types";
-import { CameraMenu } from "./CameraMenu";
+import { CameraFrom } from "./Form/CameraForm";
 
-export const SideForm: React.FC = () => {
+export const SideMenu: React.FC = () => {
   const dispatch = useDispatch();
   const { sideFormProps, cameras } = useSelector((state: RootState) => {
     return state.app;
@@ -32,7 +32,7 @@ export const SideForm: React.FC = () => {
         <Drawer.Title>{`Camera ${currentCameraId}`}</Drawer.Title>
       </Drawer.Header>
       <Drawer.Body>
-        <CameraMenu key={currentCameraId} camera={camera} />
+        <CameraFrom key={currentCameraId} camera={camera} />
       </Drawer.Body>
     </Drawer>
   );

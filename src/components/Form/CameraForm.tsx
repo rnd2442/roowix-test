@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { Button, FlexboxGrid, InputGroup } from "rsuite";
-import { appActions } from "../redux/actions/app.actions";
-import { TCamera } from "../types";
-import { convertToDM, convertToLatlng } from "../utils";
+import { appActions } from "../../redux/actions/app.actions";
+import { TCamera } from "../../types";
+import { convertToDM, convertToLatlng } from "../../utils";
 import { ValueInput } from "./ValueInput";
 import { CoordInput } from "./CoordInput";
 import { ClearButton } from "./ClearButton";
@@ -33,7 +33,7 @@ const initCoords = (latLng: LatLngTuple) => ({
   lngMin: convertToDM(latLng[1])[1].toString(),
 });
 
-export const CameraMenu: React.FC<TProps> = ({ camera }) => {
+export const CameraFrom: React.FC<TProps> = ({ camera }) => {
   const dispatch = useDispatch();
   const { id, latLng, directionAngle, viewAngle, viewRange } = camera;
 
@@ -127,20 +127,22 @@ export const CameraMenu: React.FC<TProps> = ({ camera }) => {
 
   return (
     <>
-      <div className="cam-params">
-        <label className="cam-params-label">{"коррдинаты"}</label>
-        <InputGroup className="cam-params-coordinates">
-          {coordInputs.map((name) => (
-            <CoordInput
-              key={name}
-              name={name}
-              value={coords[name].toString()}
-              callback={onChangeCoordsHandler}
-            />
-          ))}
-          <ClearButton name="latLng" callback={clearInputHandler} />
-        </InputGroup>
-      </div>
+      <FlexboxGrid justify="start" className="cam-params">
+        <FlexboxGrid.Item colspan={15}>
+          <label className="cam-params-label">{"коррдинаты"}</label>
+          <InputGroup className="cam-params-coordinates">
+            {coordInputs.map((name) => (
+              <CoordInput
+                key={name}
+                name={name}
+                value={coords[name].toString()}
+                callback={onChangeCoordsHandler}
+              />
+            ))}
+            <ClearButton name="latLng" callback={clearInputHandler} />
+          </InputGroup>
+        </FlexboxGrid.Item>
+      </FlexboxGrid>
       <FlexboxGrid justify="space-between" className="cam-params">
         {paramInputs.map(([name, label]) => (
           <ValueInput

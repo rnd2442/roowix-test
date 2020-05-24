@@ -6,7 +6,7 @@ import { appActions } from "../redux/actions/app.actions";
 import { Camera } from "./Camera";
 import { RootState } from "../types";
 import { buildCamera } from "../utils";
-import { SideForm } from "./SideForm";
+import { SideMenu } from "./SideMenu";
 
 const bounds: LatLngTuple[] = [
   [1165, 0],
@@ -55,7 +55,7 @@ export const PrimaryMap: React.FC = () => {
           <Camera key={camera.id} camera={camera} />
         ))}
       </Map>
-      <SideForm />
+      <SideMenu />
     </>
   );
 };
