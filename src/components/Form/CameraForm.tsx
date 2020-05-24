@@ -145,6 +145,7 @@ export const CameraFrom: React.FC<TProps> = ({ camera }) => {
                 key={name}
                 name={name}
                 value={params[name]}
+                isError={errors[name].hasError}
                 callback={onChangeParamsHandler}
               />
             ))}
